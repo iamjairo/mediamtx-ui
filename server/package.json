@@ -13,6 +13,6 @@
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "fs-extra": "^11.3.2",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.3"
   }
 }
