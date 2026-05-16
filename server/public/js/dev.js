@@ -26,7 +26,7 @@ function sanitizeCssPath(filePath) {
     if (normalized.includes('..')) return null;
     if (!/^\/[a-zA-Z0-9/_\-.]+\.css$/.test(normalized)) return null;
 
-    return normalized;
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
 }
 
 function reloadOrAddLink(filePath) {
@@ -59,7 +59,7 @@ ws.onmessage = (event) => {
         const relativePath = msg.file.replace(/^.*public\//, '');
         const safePath = sanitizeCssPath(relativePath);
         if (!safePath) {
-            console.warn(`Ignored unsafe CSS path from websocket: ${relativePath}`);
+            console.warn('Rejected unsafe CSS path from dev websocket message.');
             return;
         }
         reloadOrAddLink(safePath);
