@@ -1,99 +1,118 @@
 .tab.overview {
-    width: initial;
-    margin: 110px 30px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
 
     .streams {
         display: grid;
-        grid-auto-columns: 1fr;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-xxl);
-        grid-auto-flow: row;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: var(--space-xl);
 
         .stream-item {
             display: block;
-            padding: var(--space-xl);
-            background-color: var(--shift-005);
-            border: 1px solid var(--light-border-color);
-            border-radius: 10px;
+            padding: 0;
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-l);
             position: relative;
-            min-height: 120px;
+            overflow: hidden;
+            transition: all var(--transition-normal);
+
+            &:hover {
+                border-color: rgba(6, 182, 212, 0.3);
+                box-shadow: var(--glow-primary);
+                transform: translateY(-2px);
+            }
+
+            .stream-header {
+                padding: var(--space-l) var(--space-xl);
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
 
             .stream-name {
-                font-size: 25px;
+                font-size: var(--fs-ml);
+                font-weight: 500;
+                color: var(--text-color);
             }
 
             .stream-type {
-                font-size: 10px;
+                font-size: var(--fs-xxs);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: var(--color-primary);
+                background: rgba(6, 182, 212, 0.1);
+                padding: 2px 8px;
+                border-radius: var(--radius-full);
+                font-weight: 500;
             }
 
             .stream-viewers {
-                position: absolute;
-                right: 20px;
-                top: var(--space-xl);
-                padding: 0 0 17px 0;
-                border-radius: 5px;
-                font-size: 10px;
-                overflow: hidden;
-                text-transform: uppercase;
-
+                display: flex;
+                align-items: center;
+                gap: var(--space-xs);
+                font-size: var(--fs-s);
+                color: var(--text-light-color);
+                position: static;
+                padding: 0;
 
                 .stream-viewers-number {
                     display: inline;
-                    padding: 30px;
-                    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-                    font-size: 25px;
+                    padding: 0;
+                    font-size: var(--fs-l);
+                    font-weight: 600;
+                    color: var(--color-accent-green);
                     vertical-align: middle;
                 }
             }
 
             .stream-label {
                 display: inline-block;
-                position: absolute;
-                bottom: 5px;
-                width: 100%;
-                text-align: center;
-                left: 0;
+                position: static;
+                width: auto;
+                text-align: left;
+                font-size: var(--fs-xxs);
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: var(--text-muted-color);
             }
 
             .stream-bytes {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                font-size: 10px;
+                gap: var(--space-m);
+                font-size: var(--fs-xxs);
                 text-transform: uppercase;
-                background-color: var(--light-med-bg);
-                padding: 10px;
-                border-bottom-left-radius: 10px;
-                border-bottom-right-radius: 10px;
+                letter-spacing: 0.04em;
+                background: var(--shift-005);
+                padding: var(--space-m) var(--space-xl);
+                border-top: 1px solid var(--card-border);
 
                 .stream-label {
-                    position: relative;
-                    width: initial;
-                    text-align: left;
-                    bottom: initial;
-                    display: inline-block;
-                    margin-right: 5px;
+                    color: var(--text-muted-color);
+                    margin-right: var(--space-xs);
                 }
 
-                .stream-bytes-sent-number {
-                    font-weight: bold;
-                    display: inline-block;
-                }
-
+                .stream-bytes-sent-number,
                 .stream-bytes-received-number {
-                    font-weight: bold;
+                    font-weight: 600;
                     display: inline-block;
+                    color: var(--text-color);
                 }
             }
 
-
             video {
-                margin-top: 10px;
+                margin: 0;
                 position: relative;
                 width: 100%;
-                height: initial;
-                background-color: var(--light-bg);
+                height: auto;
+                aspect-ratio: 16 / 9;
+                background-color: var(--page-bg);
                 display: block;
+                object-fit: cover;
+                border-radius: 0;
             }
         }
     }

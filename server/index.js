@@ -17,6 +17,8 @@ export default class Main extends Events {
 
         this.mediamtxApiUrlBase = process.env['MEDIAMTX_API_URL_BASE'] ?? `http://mediamtx:9997/v3`;
         this.mediamtxMetricsUrlBase = process.env['MEDIAMTX_METRICS_URL_BASE'] ?? `http://mediamtx:9998/metrics`;
+        this.mediamtxApiUser = process.env['MEDIAMTX_API_USER'] || false;
+        this.mediamtxApiPassword = process.env['MEDIAMTX_API_PASSWORD'] || false;
 
         process.on('SIGINT', async () => {
             console.log('Stoppe…');

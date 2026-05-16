@@ -25,7 +25,7 @@ export default class StreamsTab extends Tab {
 
         this.element = document.createElement('div');
         this.element.className = 'tab paths';
-        this.page.element.append(this.element);
+        this.page.contentWrapper.append(this.element);
 
         this.list = document.createElement('div');
         this.list.className = 'paths-list';

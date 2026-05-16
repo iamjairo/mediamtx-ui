@@ -43,7 +43,7 @@ export default class SettingsService {
         await sleep(this.debounceTime);
 
         if (id !== this.debounce.loadGlobal)
-            return;
+            return true;
 
         const res = await this.fm.fetch('/mediamtx/config/global/get', {
             headers: {

@@ -15,8 +15,8 @@ export default class MediaMTX {
 
         this.proxy = new MediamtxApiProxy(this, {
             targetBaseUrl: this.apiUrlBase,
-            apiUser: false,
-            apiPassword: false,
+            apiUser: this.app.mediamtxApiUser,
+            apiPassword: this.app.mediamtxApiPassword,
 
             // optional: eigene Auth (JWT, API-Key, whatever)
             beforeProxy: (req, res) => {
@@ -30,8 +30,8 @@ export default class MediaMTX {
 
         this.metrics = new MediamtxMetricsProxy(this, {
             targetBaseUrl: this.metricsUrlBase,
-            apiUser: false,
-            apiPassword: false,
+            apiUser: this.app.mediamtxApiUser,
+            apiPassword: this.app.mediamtxApiPassword,
 
             // optional: eigene Auth (JWT, API-Key, whatever)
             beforeProxy: (req, res) => {

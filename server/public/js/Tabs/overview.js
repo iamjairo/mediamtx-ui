@@ -15,7 +15,7 @@ export default class OverviewTab extends Tab {
         // the box
         this.element = document.createElement("div");
         this.element.className = "tab overview";
-        this.page.element.append(this.element);
+        this.page.contentWrapper.append(this.element);
 
         this.pathsEl = document.createElement("div");
         this.pathsEl.classList.add('streams');

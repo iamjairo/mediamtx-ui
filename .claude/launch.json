@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dashboard",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["index.js"],
+      "cwd": "server",
+      "port": 3000,
+      "env": {
+        "MEDIAMTX_API_URL_BASE": "https://iamjairo-nas.local:9997/v3",
+        "MEDIAMTX_METRICS_URL_BASE": "https://iamjairo-nas.local:9998/metrics",
+        "MEDIAMTX_API_USER": "iamjairo",
+        "MEDIAMTX_API_PASSWORD": "iamjairo",
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      }
+    }
+  ]
+}

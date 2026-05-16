@@ -1,19 +1,25 @@
 .users {
-    margin-top: 150px;
+    margin-top: var(--space-xl);
 
     .user-list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 16px;
-        margin-bottom: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: var(--space-l);
+        margin-bottom: var(--space-xl);
     }
 
     .user {
-        background-color: var(--shift-005);
+        background: var(--card-bg);
+        backdrop-filter: var(--glass-blur);
         position: relative;
-        border: 1px solid var(--light-border-color);
-        border-radius: 5px;
-        padding: 20px 10px;
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-l);
+        padding: var(--space-xl) var(--space-l);
+        transition: border-color var(--transition-fast);
+
+        &:hover {
+            border-color: rgba(148, 163, 184, 0.2);
+        }
 
         .index {
             display: block;
@@ -22,11 +28,10 @@
             top: -10px;
             font-size: 100px;
             font-weight: 900;
+            color: var(--shift-005);
         }
 
-        input {
-            width: calc(100% - 20px);
-        }
+        input { width: calc(100% - 20px); }
 
         .form-item {
             width: 100%;
@@ -34,14 +39,14 @@
             &.select-text {
                 input[type=text] {
                     font-weight: 400;
-                    font-size: 25px;
+                    font-size: var(--fs-xl);
                     border: none;
                     border-bottom: 2px solid var(--light-border-color);
                     display: none;
                 }
 
                 select {
-                    font-size: 25px;
+                    font-size: var(--fs-xl);
                     margin: 0;
                     position: relative;
                     border: none;
@@ -49,9 +54,7 @@
                     width: 100%;
                 }
 
-                button.clear{
-                    bottom: 16px;
-                }
+                button.clear { bottom: 16px; }
 
                 &.custom {
                     select {
@@ -59,7 +62,6 @@
                         width: 100px;
                         position: absolute;
                     }
-
                     input[type=text] {
                         width: calc(100% - 125px);
                         display: block;
@@ -78,6 +80,7 @@
             display: block;
             padding-left: 45px;
             position: relative;
+            border-radius: var(--radius-m);
 
             svg {
                 width: 20px;
@@ -87,17 +90,16 @@
                 top: 0;
                 padding: 0 8px;
                 background-color: rgba(0, 0, 0, 0.2);
-                border-radius: 3px;
+                border-radius: var(--radius-m) 0 0 var(--radius-m);
             }
-
-
         }
 
         &.delete {
             background-color: var(--color-primary-conter);
             padding-left: 45px;
             position: relative;
-            margin: 20px auto 0 auto;
+            margin: var(--space-xl) auto 0 auto;
+            border-radius: var(--radius-m);
 
             svg {
                 width: 20px;
@@ -107,9 +109,8 @@
                 top: 0;
                 padding: 0 8px;
                 background-color: rgba(0, 0, 0, 0.2);
-                border-radius: 3px;
+                border-radius: var(--radius-m) 0 0 var(--radius-m);
             }
         }
     }
-
 }

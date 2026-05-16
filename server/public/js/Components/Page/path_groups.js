@@ -27,7 +27,8 @@ const PathGroups = [
                     'srtReadPassphrase',
                     'useAbsoluteTimestamp',
                     'overridePublisher',
-                    'srtPublishPassphrase'
+                    'srtPublishPassphrase',
+                    'rtspDemuxMpegts'
                 ]
             }
         ]
@@ -36,12 +37,12 @@ const PathGroups = [
         storeKey: 'recording',
         columns: [
             {
-                name: 'Enabled',
+                name: 'Settings',
                 props: ['record', 'recordPath',
                     'recordFormat',
                     'recordMaxPartSize']
             }, {
-                name: 'Enabled',
+                name: 'Duration',
                 props: [
                     'recordPartDuration',
                     'recordSegmentDuration',
@@ -54,94 +55,66 @@ const PathGroups = [
         storeKey: 'rtsp',
         columns: [
             {
-                name: 'Enabled',
+                name: 'RTSP Source',
                 props: [
-                    // Default path settings -> RTSP source (when source is a RTSP or a RTSPS URL)
                     'rtspTransport',
                     'rtspAnyPort',
                     'rtspRangeType',
                     'rtspRangeStart',
                     'rtspUDPSourcePortRange',
-
-                    // Default path settings -> RTP source (when source is RTP)
-                    'rtpSDP']
+                ]
+            }, {
+                name: 'RTP Source',
+                props: [
+                    'rtpSDP'
+                ]
             }
         ]
     }, {
-        name: 'Raspberry Pi Cam',
-        storeKey: 'raspicam',
-        props: [
-            'rpiCameraCamID',
-            'rpiCameraSecondary',
-            'rpiCameraWidth',
-            'rpiCameraHeight',
-            'rpiCameraHFlip',
-            'rpiCameraVFlip',
-            'rpiCameraBrightness',
-            'rpiCameraContrast',
-            'rpiCameraSaturation',
-            'rpiCameraSharpness',
-            'rpiCameraExposure',
-            'rpiCameraAWB',
-            //'rpiCameraAWBGains',
-            'rpiCameraDenoise',
-            'rpiCameraShutter',
-            'rpiCameraMetering',
-            'rpiCameraGain',
-            'rpiCameraEV',
-            'rpiCameraROI',
-            'rpiCameraHDR',
-            'rpiCameraTuningFile',
-            'rpiCameraMode',
-            'rpiCameraFPS',
-            'rpiCameraAfMode',
-            'rpiCameraAfRange',
-            'rpiCameraAfSpeed',
-            'rpiCameraLensPosition',
-            'rpiCameraLensPosition',
-            'rpiCameraAfWindow',
-            'rpiCameraFlickerPeriod',
-            'rpiCameraCodec',
-            'rpiCameraIDRPeriod',
-            'rpiCameraBitrate',
-            'rpiCameraHardwareH264Profile',
-            'rpiCameraHardwareH264Level',
-            'rpiCameraSoftwareH264Profile',
-            'rpiCameraSoftwareH264Level',
-            'rpiCameraMJPEGQuality',
-            'rpiCameraAfWindow',
-            'rpiCameraFlickerPeriod',
-            'rpiCameraTextOverlayEnable',
-            'rpiCameraTextOverlay',
-            'rpiCameraCodec',
-            'rpiCameraIDRPeriod',
-            'rpiCameraBitrate',
-            'rpiCameraHardwareH264Profile',
-            'rpiCameraHardwareH264Level',
-            'rpiCameraSoftwareH264Profile',
-            'rpiCameraSoftwareH264Level',
-            'rpiCameraMJPEGQuality'
+        name: 'WebRTC / WHEP',
+        storeKey: 'whep',
+        columns: [
+            {
+                name: 'WHEP Source',
+                props: [
+                    'whepBearerToken',
+                    'whepSTUNGatherTimeout',
+                    'whepHandshakeTimeout',
+                    'whepTrackGatherTimeout',
+                ]
+            }
         ]
     }, {
-        name: 'HOOKS',
+        name: 'Hooks',
         storeKey: 'hooks',
         columns: [
             {
-                name: 'Settings',
-                props: ['runOnInit',
+                name: 'Lifecycle',
+                props: [
+                    'runOnInit',
                     'runOnInitRestart',
                     'runOnDemand',
                     'runOnDemandRestart',
                     'runOnDemandStartTimeout',
                     'runOnDemandCloseAfter',
                     'runOnUnDemand',
+                ]
+            }, {
+                name: 'Stream Events',
+                props: [
                     'runOnReady',
                     'runOnReadyRestart',
                     'runOnNotReady',
                     'runOnRead',
                     'runOnReadRestart',
+                    'runOnUnread',
+                ]
+            }, {
+                name: 'Recording Events',
+                props: [
                     'runOnRecordSegmentCreate',
-                    'runOnRecordSegmentComplete']
+                    'runOnRecordSegmentComplete',
+                ]
             }
         ]
     },

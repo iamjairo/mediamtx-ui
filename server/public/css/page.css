@@ -3,6 +3,8 @@
 @import './form.css';
 @import './form-item.css';
 @import './global.css';
+@import './sidebar.css';
+@import './header.css';
 @import './tab.css';
 @import './tab-navigation.css';
 @import './users.css';

@@ -42,6 +42,7 @@ export default class FormItem extends Component {
         }
 
         const inputComponent = this.getInputComponent();
+        if (!inputComponent || !Inputs[inputComponent]) return;
         this.item = new Inputs[inputComponent](params);
     }
 

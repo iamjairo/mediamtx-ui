@@ -1,20 +1,18 @@
 export default class Component {
-    constructor(parent, storeKey, store, prop, inputType, values, locked, options) {
-        this.parent = parent;
-        this.storeKey = storeKey;
-        this.store = store;
+    constructor(options = {}) {
+        this.parent = options.parent;
+        this.storeKey = options.storeKey;
+        this.store = options.store;
+        this.prop = options.prop;
+        this.name = `${options.prop}`.toLowerCase();
+        this.inputType = options.inputType;
+        this.values = options.values;
+        this.locked = options.locked;
+        this.options = options.elementOptions || {};
 
-        this.prop = prop;
-        this.name = `${prop}`.toLowerCase();
+        this.debounceTime = 50;
 
-        this.inputType = inputType; // the name of the form input class from Components/Form/index.js
-        this.values = values;       // available enums
-        this.locked = locked;       // not editable props
-        this.options = options;     // the elementProps override
-
-        this.debounceTime = 50;     //ms
-
-        this.targetElement = this.parent.element || false;
+        this.targetElement = this.parent?.element || false;
         this.elementTag = 'div';
         this.elementProps = {
             className: 'item'
@@ -26,27 +24,11 @@ export default class Component {
     }
 
     render() {
-        // create the element
         this.element = document.createElement(this.elementTag);
-        // use element props
         Object.keys(this.elementProps).forEach(prop => prop !== 'dataset' ? this.element[prop] = this.elementProps[prop] : null);
-        // all props except dataset
-        Object.keys(this.elementProps).forEach(prop => prop !== 'dataset' ? this.element[prop] = this.elementProps[prop] : null);
-        // only dataset
         this.elementProps.dataset ? Object.keys(this.elementProps.dataset).forEach(dataKey => this.element.dataset[dataKey] = this.elementProps.dataset[dataKey]) : null;
     }
 
-    /*
-    on(event, callback) {
-        return this.events.on(event, callback);
-    }
-
-    emit(event, ...args) {
-        return this.events.emit(event, ...args);
-    }
-     */
-
-    // triggered from outside
     setValue(value) {
         this.element.value = value;
     }
@@ -65,8 +47,14 @@ export default class Component {
     }
 
     set dataType(val) {
-        // do nothing
+        // read-only
     }
 
     get dataTypeValues() {
-        return Array.isArray(this.
+        return Array.isArray(this.values) ? 'array' : typeof this.values;
+    }
+
+    set dataTypeValues(val) {
+        // read-only
+    }
+}

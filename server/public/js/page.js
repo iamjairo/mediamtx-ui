@@ -53,7 +53,12 @@ export default class Page {
         !this.tabNavigation ? this.tabNavigation = new TabNavigation(this) : null;
 
         this.settings = new Settings(this);
-        await this.settings.load();
+        try {
+            await this.settings.load();
+        } catch (e) {
+            console.error(e);
+            this.toast.error('MediaMTX server is not reachable. Settings could not be loaded.');
+        }
 
         this.tabs = {
             overview: Tabs.OverviewTab,
@@ -78,12 +83,18 @@ export default class Page {
     async showTab(tab) {
         this.destroyTab();
         const constructor = this.tabs[tab.slug];
+        if (!constructor) return;
+
         this.tab = new constructor(this);
 
         if (!this.tab)
             return;
 
         await this.tab.render();
+    }
+
+    get contentWrapper() {
+        return this.tabNavigation?.contentWrapper || this.element;
     }
 
     async eject() {

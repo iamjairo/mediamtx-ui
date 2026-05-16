@@ -26,7 +26,7 @@ export default class UsersTab extends Tab {
         // the box
         this.element = document.createElement("div");
         this.element.className = "tab users";
-        this.page.element.append(this.element);
+        this.page.contentWrapper.append(this.element);
 
         this.list = document.createElement('div');
         this.list.className = 'user-list';
