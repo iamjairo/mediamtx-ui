@@ -14,25 +14,19 @@ const ws = new WebSocket(`${protocol}://${wsHost}:${wsPort}`);
 const linkMap = new Map();
 
 function sanitizeCssPath(filePath) {
-    if (typeof filePath !== 'string') {
-        return null;
-    }
+    if (typeof filePath !== 'string') return null;
 
     const trimmed = filePath.trim();
-    if (!trimmed) {
-        return null;
-    }
+    if (!trimmed) return null;
 
-    if (/^(?:[a-zA-Z][a-zA-Z0-9+.-]*:|\/\/)/.test(trimmed)) {
-        return null;
-    }
+    // Only allow relative CSS paths (no scheme/protocol-relative URLs).
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed) || trimmed.startsWith('//')) return null;
+    // Disallow traversal, backslashes, query and hash fragments.
+    if (trimmed.includes('..') || trimmed.includes('\\') || trimmed.includes('?') || trimmed.includes('#')) return null;
+    // Restrict to safe path characters and require .css extension.
+    if (!/^[A-Za-z0-9/_\-.]+\.css$/.test(trimmed)) return null;
 
-    const normalized = trimmed.replace(/^\/+/, '');
-    if (!/^[a-zA-Z0-9._\/-]+\.css$/.test(normalized)) {
-        return null;
-    }
-
-    return normalized;
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
 }
 
 function reloadOrAddLink(filePath) {
@@ -65,7 +59,7 @@ ws.onmessage = (event) => {
         const relativePath = msg.file.replace(/^.*public\//, '');
         const safePath = sanitizeCssPath(relativePath);
         if (!safePath) {
-            console.warn(`Ignored unsafe CSS path from websocket: ${relativePath}`);
+            console.warn('Rejected unsafe CSS path from dev websocket message.');
             return;
         }
         reloadOrAddLink(safePath);
