@@ -47,7 +47,7 @@ function reloadOrAddLink(filePath) {
         linkMap.set(fileName, link);
         console.log(`CSS added: ${safePath}`);
     } else {
-        const href = link.href.split('?')[0];
+        const href = safePath.split('?')[0];
         link.href = `${href}?t=${Date.now()}`;
         console.log(`CSS reloaded: ${safePath}`);
     }
@@ -57,6 +57,11 @@ ws.onmessage = (event) => {
     const msg = JSON.parse(event.data);
     if (msg.type === 'reload-css') {
         const relativePath = msg.file.replace(/^.*public\//, '');
-        reloadOrAddLink(relativePath);
+        const safePath = sanitizeCssPath(relativePath);
+        if (!safePath) {
+            console.warn(`Ignored unsafe CSS path from websocket: ${relativePath}`);
+            return;
+        }
+        reloadOrAddLink(safePath);
     }
 };
