@@ -1,4 +1,5 @@
 import express from "express";
+import rateLimit from "express-rate-limit";
 
 export default class AuthRoutes {
     constructor(server) {
@@ -8,6 +9,12 @@ export default class AuthRoutes {
 
         this.router = express.Router();
         this.csrfProtection = this.server.csrfProtection;
+        this.loginRateLimiter = rateLimit({
+            windowMs: 15 * 60 * 1000,
+            max: 20,
+            standardHeaders: true,
+            legacyHeaders: false
+        });
 
         // get CSRF token
         this.router.get("/csrf", this.csrfProtection, (req, res) => {
@@ -15,7 +22,7 @@ export default class AuthRoutes {
         });
 
         // login
-        this.router.post("/login", this.csrfProtection, async (req, res) => {
+        this.router.post("/login", this.loginRateLimiter, this.csrfProtection, async (req, res) => {
 
             if (!await this.auth.login(req, res))
                 return res.sendStatus(401);
