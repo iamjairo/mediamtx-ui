@@ -16,15 +16,15 @@ const linkMap = new Map();
 function sanitizeCssPath(filePath) {
     if (typeof filePath !== 'string') return null;
 
-    const trimmed = filePath.trim();
-    if (!trimmed) return null;
+    const cleaned = filePath.split(/[?#]/)[0].trim();
+    if (!cleaned) return null;
 
-    // Only allow relative CSS paths (no scheme/protocol-relative URLs).
-    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed) || trimmed.startsWith('//')) return null;
-    // Disallow traversal, backslashes, query and hash fragments.
-    if (trimmed.includes('..') || trimmed.includes('\\') || trimmed.includes('?') || trimmed.includes('#')) return null;
-    // Restrict to safe path characters and require .css extension.
-    if (!/^[A-Za-z0-9/_\-.]+\.css$/.test(trimmed)) return null;
+    if (/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(cleaned)) return null;
+    if (/^(?:javascript|data):/i.test(cleaned)) return null;
+
+    const normalized = cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
+    if (normalized.includes('..')) return null;
+    if (!/^\/[a-zA-Z0-9/_\-.]+\.css$/.test(normalized)) return null;
 
     return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
 }
