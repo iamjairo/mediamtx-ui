@@ -7,26 +7,20 @@ services:
   mediamtxui:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     image: ${PROJECT_NAME}
     container_name: ${PROJECT_NAME}
     working_dir: /app/server
-    restart: always
-    command: 'tail -f /dev/null'
-    #command: 'node index.js'
-    user: root
+    restart: unless-stopped
+    command: 'node index.js'
     networks:
       - camnet
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
       - "35729:35729"
     volumes:
-      - /app/node_modules
+      - /app/server/node_modules
       - .:/app
-#      - /usr/bin/ffmpeg:/usr/local/bin/ffmpeg:ro
-#      - /usr/bin/ffprobe:/usr/local/bin/ffprobe:ro
-#     - /usr/lib/:/usr/lib/:ro
-#     - /etc/alternatives:/etc/alternatives/:ro
     environment:
       - DEBUG=true
       - VERBOSE=2
@@ -40,6 +34,8 @@ services:
       - API_PORT=${API_PORT}
       - MEDIAMTX_API_URL_BASE=http://mediamtx:9997/v3
       - MEDIAMTX_METRICS_URL_BASE=http://mediamtx:9996/metrics
+      - HW_ACCEL=${HW_ACCEL:-none}
+      - RECORDING_PATH=/recordings
     devices:
       - '/dev/video0:/dev/video0'
       - '/dev/video1:/dev/video1'
@@ -47,10 +43,6 @@ services:
       - '/dev/video3:/dev/video3'
       - '/dev/video4:/dev/video4'
       - '/dev/video5:/dev/video5'
-      #      - '/dev/video6:/dev/video6'
-      #      - '/dev/video7:/dev/video7'
-      #      - '/dev/video8:/dev/video8'
-      #      - '/dev/video9:/dev/video9'
       - '/dev/video10:/dev/video10'
       - '/dev/video11:/dev/video11'
     privileged: true

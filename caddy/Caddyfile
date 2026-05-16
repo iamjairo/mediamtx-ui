@@ -1,0 +1,35 @@
+{$DOMAIN:localhost} {
+	# Dashboard UI
+	handle /* {
+		reverse_proxy mediamtxui:{$SERVER_PORT:3000}
+	}
+
+	# HLS streams
+	handle /hls/* {
+		reverse_proxy mediamtx:{$HLS_PORT:8888}
+	}
+
+	# WebRTC API
+	handle /webrtc/* {
+		reverse_proxy mediamtx:{$WEBRTC_PORT:8889}
+	}
+
+	# WebSocket support for live updates
+	handle /ws/* {
+		reverse_proxy mediamtxui:{$SERVER_PORT:3000}
+	}
+
+	encode gzip zstd
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/niccolozy/niccolozy/main/schemas/desktop/tauri-desktop.schema.json",
+  "productName": "MediaMTX Dashboard",
+  "version": "2.0.0",
+  "identifier": "com.mediamtx.dashboard",
+  "build": {
+    "devUrl": "http://localhost:3000",
+    "frontendDist": "http://localhost:3000"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "MediaMTX Dashboard",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 800,
+        "minHeight": 600
+      }
+    ]
+  }
+}

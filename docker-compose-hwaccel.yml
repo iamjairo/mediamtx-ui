@@ -1,0 +1,27 @@
+networks:
+  camnet:
+    driver: bridge
+
+services:
+
+  mediamtxui:
+    extends:
+      file: docker-compose.yml
+      service: mediamtxui
+    environment:
+      - HW_ACCEL=${HW_ACCEL:-vaapi}
+    devices:
+      - '/dev/dri:/dev/dri'
+    group_add:
+      - video
+      - render
+
+  mediamtx:
+    extends:
+      file: docker-compose-mediamtx.yml
+      service: mediamtx
+    devices:
+      - '/dev/dri:/dev/dri'
+    group_add:
+      - video
+      - render

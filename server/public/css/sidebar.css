@@ -133,6 +133,115 @@
     text-align: center;
 }
 
+/* Collapse toggle button */
+.sidebar .collapse-toggle {
+    background: none;
+    border: none;
+    color: var(--text-muted-color);
+    cursor: pointer;
+    padding: var(--space-s) var(--space-m);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    transition: color var(--transition-fast);
+}
+
+.sidebar .collapse-toggle:hover {
+    color: var(--text-color);
+}
+
+.sidebar .collapse-toggle svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
+}
+
+.sidebar.collapsed .collapse-toggle svg {
+    transform: rotate(180deg);
+}
+
+/* Collapsed sidebar states */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar.collapsed .brand {
+    padding: var(--space-l) var(--space-m);
+    justify-content: center;
+}
+
+.sidebar.collapsed .brand .brand-name,
+.sidebar.collapsed .brand .brand-version {
+    display: none;
+}
+
+.sidebar.collapsed .nav-section-label {
+    display: none;
+}
+
+.sidebar.collapsed .nav-item span {
+    display: none;
+}
+
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: var(--space-s) var(--space-m);
+}
+
+.sidebar.collapsed .nav-item .badge {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-footer span {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-footer .logout-btn {
+    justify-content: center;
+}
+
+.sidebar.collapsed .sidebar-footer .status-indicator {
+    justify-content: center;
+}
+
+/* Collapsed tooltip for nav items */
+.sidebar.collapsed .nav-item {
+    position: relative;
+}
+
+.sidebar.collapsed .nav-item::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--surface-bg);
+    color: var(--text-color);
+    padding: 4px 10px;
+    border-radius: var(--radius-m);
+    font-size: var(--fs-s);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+    border: 1px solid var(--light-border-color);
+    z-index: 200;
+}
+
+.sidebar.collapsed .nav-item:hover::after {
+    opacity: 1;
+}
+
+/* Collapsed layout adjustments for main content and header */
+.sidebar.collapsed ~ .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+.sidebar.collapsed ~ .top-header {
+    left: var(--sidebar-collapsed-width);
+}
+
 .sidebar .sidebar-footer {
     padding: var(--space-l);
     border-top: 1px solid var(--light-border-color);

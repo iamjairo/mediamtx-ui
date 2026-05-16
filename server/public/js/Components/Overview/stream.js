@@ -23,37 +23,62 @@ export default class StreamItem {
         const el = document.createElement("div");
         el.className = 'stream-item';
 
-        //--- name
+        // Determine source type for protocol-specific styling
+        const sourceType = this.data.source ? this.data.source.type : '';
+        const protocolClass = this.getProtocolClass(sourceType);
+        if (protocolClass) el.classList.add(protocolClass);
+
+        // Live status indicator
+        el.classList.add('status-live');
+
+        //--- header with name + type badge
+        const headerEl = document.createElement("div");
+        headerEl.className = 'stream-header';
+
+        const headerLeft = document.createElement("div");
+        headerLeft.className = 'stream-header-left';
+
         const nameEl = document.createElement("div");
         nameEl.className = 'stream-name';
         nameEl.textContent = this.data.confName;
-        el.append(nameEl);
+        headerLeft.append(nameEl);
 
-        //--- type
+        //--- type badge (protocol)
         this.typeEl = document.createElement("div");
         this.typeEl.className = 'stream-type';
+        if (protocolClass) this.typeEl.classList.add(protocolClass);
         this.typeEl.textContent = this.data.source && this.data.tracks ? `${splitCamelCase(this.data.source.type).toUpperCase()} - ${this.data.tracks.join(', ')}` : '';
-        el.append(this.typeEl);
+        headerLeft.append(this.typeEl);
 
-        //--- viewers
+        headerEl.append(headerLeft);
+
+        //--- viewers with eye icon
         const viewersEl = document.createElement("div");
         viewersEl.className = 'stream-viewers';
 
-        const labelViewersEl = label('Viewers');
-        viewersEl.append(labelViewersEl);
+        const eyeIcon = this.page.icons?.svg?.['eye'] || '';
+        const eyeSpan = document.createElement("span");
+        eyeSpan.className = 'stream-viewers-icon';
+        eyeSpan.innerHTML = eyeIcon;
+        viewersEl.append(eyeSpan);
 
         this.viewersNumberEl = document.createElement("div");
         this.viewersNumberEl.className = 'stream-viewers-number';
         this.viewersNumberEl.textContent = this.data.readers.length;
         viewersEl.append(this.viewersNumberEl);
-        el.append(viewersEl);
+
+        const labelViewersEl = label('watching');
+        viewersEl.append(labelViewersEl);
+
+        headerEl.append(viewersEl);
+        el.append(headerEl);
 
         //--- video element
         this.video = new Video(this);
         el.append(this.video.render());
         requestAnimationFrame(() => this.video.init());
 
-        //--- bytes
+        //--- bytes footer
         const bytesEl = document.createElement("div");
         bytesEl.className = 'stream-bytes';
 
@@ -61,7 +86,7 @@ export default class StreamItem {
         const bytesReceivedEl = document.createElement("div");
         bytesReceivedEl.className = 'stream-bytes-received';
 
-        const labelBytesReceivedEl = label('MB Received');
+        const labelBytesReceivedEl = label('Received');
         bytesReceivedEl.append(labelBytesReceivedEl);
 
         this.bytesReceivedNumberEl = document.createElement("div");
@@ -74,7 +99,7 @@ export default class StreamItem {
         const bytesSentEl = document.createElement("div");
         bytesSentEl.className = 'stream-bytes-sent';
 
-        const labelBytesSentEl = label('MB Sent');
+        const labelBytesSentEl = label('Sent');
         bytesSentEl.append(labelBytesSentEl);
 
         this.bytesSentNumberEl = document.createElement("div");
@@ -85,8 +110,18 @@ export default class StreamItem {
 
         el.append(bytesEl);
 
-
         return this.element = el;
+    }
+
+    getProtocolClass(sourceType) {
+        if (!sourceType) return '';
+        const type = sourceType.toLowerCase();
+        if (type.includes('rtsp')) return 'protocol-rtsp';
+        if (type.includes('hls')) return 'protocol-hls';
+        if (type.includes('webrtc')) return 'protocol-webrtc';
+        if (type.includes('rtmp')) return 'protocol-rtmp';
+        if (type.includes('srt')) return 'protocol-srt';
+        return '';
     }
 
     update(data) {
@@ -105,7 +140,19 @@ export default class StreamItem {
                 this.bytesSent = value;
 
             if (prop === 'type' || prop === 'tracks') {
-                this.data.source && this.data.tracks.length > 0 ? this.typeEl.textContent = `${splitCamelCase(this.data.source.type).toUpperCase()} - ${this.data.tracks.join(', ')}` : null;
+                if (this.data.source && this.data.tracks.length > 0) {
+                    this.typeEl.textContent = `${splitCamelCase(this.data.source.type).toUpperCase()} - ${this.data.tracks.join(', ')}`;
+                    // Update protocol class on type badge and card
+                    const newProtocol = this.getProtocolClass(this.data.source.type);
+                    ['protocol-rtsp', 'protocol-hls', 'protocol-webrtc', 'protocol-rtmp', 'protocol-srt'].forEach(cls => {
+                        this.element.classList.remove(cls);
+                        this.typeEl.classList.remove(cls);
+                    });
+                    if (newProtocol) {
+                        this.element.classList.add(newProtocol);
+                        this.typeEl.classList.add(newProtocol);
+                    }
+                }
             }
         }
     }
