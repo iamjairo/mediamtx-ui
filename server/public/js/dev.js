@@ -13,21 +13,43 @@ const ws = new WebSocket(`${protocol}://${wsHost}:${wsPort}`);
 
 const linkMap = new Map();
 
+function sanitizeCssPath(filePath) {
+    if (typeof filePath !== 'string') return null;
+
+    const cleaned = filePath.split(/[?#]/)[0].trim();
+    if (!cleaned) return null;
+
+    if (/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(cleaned)) return null;
+    if (/^(?:javascript|data):/i.test(cleaned)) return null;
+
+    const normalized = cleaned.startsWith('/') ? cleaned : `/${cleaned}`;
+    if (normalized.includes('..')) return null;
+    if (!/^\/[a-zA-Z0-9/_\-.]+\.css$/.test(normalized)) return null;
+
+    return normalized;
+}
+
 function reloadOrAddLink(filePath) {
-    const fileName = filePath.split('/').pop();
+    const safePath = sanitizeCssPath(filePath);
+    if (!safePath) {
+        console.warn(`Ignored unsafe CSS path: ${filePath}`);
+        return;
+    }
+
+    const fileName = safePath.split('/').pop();
     let link = linkMap.get(fileName);
 
     if (!link) {
         link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = filePath;
+        link.href = safePath;
         document.head.appendChild(link);
         linkMap.set(fileName, link);
-        console.log(`CSS added: ${filePath}`);
+        console.log(`CSS added: ${safePath}`);
     } else {
         const href = link.href.split('?')[0];
         link.href = `${href}?t=${Date.now()}`;
-        console.log(`CSS reloaded: ${filePath}`);
+        console.log(`CSS reloaded: ${safePath}`);
     }
 }
 
