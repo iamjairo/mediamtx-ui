@@ -30,20 +30,26 @@ function sanitizeCssPath(filePath) {
 }
 
 function reloadOrAddLink(filePath) {
-    const fileName = filePath.split('/').pop();
+    const safePath = sanitizeCssPath(filePath);
+    if (!safePath) {
+        console.warn(`Ignored unsafe CSS path: ${filePath}`);
+        return;
+    }
+
+    const fileName = safePath.split('/').pop();
     let link = linkMap.get(fileName);
 
     if (!link) {
         link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = filePath;
+        link.href = safePath;
         document.head.appendChild(link);
         linkMap.set(fileName, link);
-        console.log(`CSS added: ${filePath}`);
+        console.log(`CSS added: ${safePath}`);
     } else {
-        const href = link.href.split('?')[0];
+        const href = safePath.split('?')[0];
         link.href = `${href}?t=${Date.now()}`;
-        console.log(`CSS reloaded: ${filePath}`);
+        console.log(`CSS reloaded: ${safePath}`);
     }
 }
 
