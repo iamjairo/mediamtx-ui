@@ -1,0 +1,30 @@
+/* Tailwind 4 — minimal use during migration; existing CSS does the heavy lifting */
+@import 'tailwindcss';
+
+/* Reuse the existing mediamtx-ui stylesheets verbatim. These live in server/public/css
+   so the vanilla version keeps working unchanged. We import them through relative paths;
+   Vite resolves and bundles them at build time. */
+@import '../../../server/public/css/typo.css';
+@import '../../../server/public/css/variables.css';
+@import '../../../server/public/css/form.css';
+@import '../../../server/public/css/form-item.css';
+@import '../../../server/public/css/global.css';
+@import '../../../server/public/css/sidebar.css';
+@import '../../../server/public/css/header.css';
+@import '../../../server/public/css/tab.css';
+@import '../../../server/public/css/tab-navigation.css';
+@import '../../../server/public/css/users.css';
+@import '../../../server/public/css/paths.css';
+@import '../../../server/public/css/overview.css';
+@import '../../../server/public/css/login.css';
+@import '../../../server/public/css/phase2.css';
+@import '../../../server/public/css/recordings.css';
+@import '../../../server/public/css/logs.css';
+@import '../../../server/public/css/sources.css';
+@import '../../../server/public/css/responsive.css';
+@import '../../../server/public/css/toast.css';
+@import '../../../server/public/css/camera-focus.css';
+@import '../../../server/public/css/api-docs.css';
+@import '../../../server/public/css/snapshots.css';
+@import '../../../server/public/css/hwaccel.css';
+@import '../../../server/public/css/integrations.css';
