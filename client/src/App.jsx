@@ -13,6 +13,10 @@ import DashboardTab from './components/Tabs/DashboardTab.jsx';
 import MediaMTXSourcesTab from './components/Tabs/MediaMTXSourcesTab.jsx';
 import Go2RTCSourcesTab from './components/Tabs/Go2RTCSourcesTab.jsx';
 import RecordingsTab from './components/Tabs/RecordingsTab.jsx';
+import ServerTab from './components/Tabs/ServerTab.jsx';
+import PathTab from './components/Tabs/PathTab.jsx';
+import StreamsTab from './components/Tabs/StreamsTab.jsx';
+import UsersTab from './components/Tabs/UsersTab.jsx';
 import Placeholder from './components/Tabs/Placeholder.jsx';
 import { TABS } from './tabsConfig.js';
 
@@ -32,6 +36,10 @@ const PORTED = {
   mtxsources: MediaMTXSourcesTab,
   go2rtcsources: Go2RTCSourcesTab,
   recordings: RecordingsTab,
+  server: ServerTab,
+  path: PathTab,
+  streams: StreamsTab,
+  users: UsersTab,
 };
 
 export default function App() {
