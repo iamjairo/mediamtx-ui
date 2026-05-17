@@ -1,6 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import LogsTab from './components/Tabs/LogsTab.jsx';
+import HwAccelTab from './components/Tabs/HwAccelTab.jsx';
+import ApiDocsTab from './components/Tabs/ApiDocsTab.jsx';
+import ScryptedTab from './components/Tabs/ScryptedTab.jsx';
+import MatterBridgeTab from './components/Tabs/MatterBridgeTab.jsx';
+import HomeAssistantTab from './components/Tabs/HomeAssistantTab.jsx';
+import HardwareTab from './components/Tabs/HardwareTab.jsx';
+import CaddyTab from './components/Tabs/CaddyTab.jsx';
+import DockerTab from './components/Tabs/DockerTab.jsx';
+import DashboardTab from './components/Tabs/DashboardTab.jsx';
 import Placeholder from './components/Tabs/Placeholder.jsx';
 import { TABS } from './tabsConfig.js';
 
@@ -8,6 +17,15 @@ import { TABS } from './tabsConfig.js';
 // Placeholder component so navigation always works end-to-end.
 const PORTED = {
   logs: LogsTab,
+  hwaccel: HwAccelTab,
+  apidocs: ApiDocsTab,
+  scrypted: ScryptedTab,
+  matterbridge: MatterBridgeTab,
+  homeassistant: HomeAssistantTab,
+  hardware: HardwareTab,
+  caddy: CaddyTab,
+  docker: DockerTab,
+  dashboard: DashboardTab,
 };
 
 export default function App() {
