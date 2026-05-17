@@ -10,6 +10,9 @@ import HardwareTab from './components/Tabs/HardwareTab.jsx';
 import CaddyTab from './components/Tabs/CaddyTab.jsx';
 import DockerTab from './components/Tabs/DockerTab.jsx';
 import DashboardTab from './components/Tabs/DashboardTab.jsx';
+import MediaMTXSourcesTab from './components/Tabs/MediaMTXSourcesTab.jsx';
+import Go2RTCSourcesTab from './components/Tabs/Go2RTCSourcesTab.jsx';
+import RecordingsTab from './components/Tabs/RecordingsTab.jsx';
 import Placeholder from './components/Tabs/Placeholder.jsx';
 import { TABS } from './tabsConfig.js';
 
@@ -26,6 +29,9 @@ const PORTED = {
   caddy: CaddyTab,
   docker: DockerTab,
   dashboard: DashboardTab,
+  mtxsources: MediaMTXSourcesTab,
+  go2rtcsources: Go2RTCSourcesTab,
+  recordings: RecordingsTab,
 };
 
 export default function App() {
