@@ -11,5 +11,14 @@
 @import './paths.css';
 @import './overview.css';
 @import './login.css';
+@import './phase2.css';
+@import './recordings.css';
+@import './logs.css';
+@import './sources.css';
+@import './camera-focus.css';
+@import './api-docs.css';
+@import './snapshots.css';
+@import './hwaccel.css';
+@import './integrations.css';
 @import './responsive.css';
 @import './toast.css';

@@ -25,6 +25,14 @@ export default class Icons extends EventEmitter {
             {name: 'package-check'},
             {name: 'layout-dashboard'},
             {name: 'eye'},
+            {name: 'layout-grid'},
+            {name: 'cpu'},
+            {name: 'shield'},
+            {name: 'container'},
+            {name: 'home'},
+            {name: 'film'},
+            {name: 'scroll-text'},
+            {name: 'radio'},
         ];
     }
 

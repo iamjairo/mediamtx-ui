@@ -1,0 +1,211 @@
+/* ── Hardware Acceleration tab ──────────────────────────────────────────── */
+.tab.hwaccel-tab {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding-top: var(--space-s);
+}
+
+.hwaccel-header {
+    padding: var(--space-m) 0;
+}
+
+.hwaccel-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+}
+
+.hwaccel-header-left h2 {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.hwaccel-header-left p {
+    font-size: var(--fs-s);
+    color: var(--text-muted-color);
+    margin: 0;
+}
+
+/* Detected card */
+.hwaccel-detected {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-m);
+    padding: var(--space-l);
+    margin-bottom: var(--space-xl);
+}
+
+.hwaccel-detected-inner h3 {
+    font-size: var(--fs-m);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 var(--space-m) 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hwaccel-detect-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-m);
+    margin-bottom: var(--space-m);
+}
+
+.hwaccel-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-s) var(--space-m);
+    background: var(--page-bg);
+    border-radius: var(--radius-s);
+    border-left: 3px solid var(--color-primary);
+}
+
+.hwaccel-stat span:first-child {
+    font-size: var(--fs-xs);
+    color: var(--text-muted-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.hwaccel-stat .value {
+    font-size: var(--fs-s);
+    color: var(--text-color);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    word-break: break-word;
+}
+
+.hwaccel-detect-note {
+    font-size: var(--fs-xs);
+    color: var(--text-muted-color);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.hwaccel-detect-note code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: var(--page-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--color-primary);
+    font-size: 0.7rem;
+}
+
+/* Section heading */
+.hwaccel-section-heading {
+    font-size: var(--fs-l);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 var(--space-m) 0;
+}
+
+/* Preset grid */
+.hwaccel-preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: var(--space-m);
+}
+
+.hwaccel-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-m);
+    padding: var(--space-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    transition: border-color 0.15s;
+}
+
+.hwaccel-card:hover {
+    border-color: rgba(34, 211, 238, 0.3);
+}
+
+.hwaccel-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+}
+
+.hwaccel-vendor-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.hwaccel-card-header h4 {
+    flex: 1;
+    margin: 0;
+    font-size: var(--fs-m);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.hwaccel-vendor-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--page-bg);
+    color: var(--text-muted-color);
+    padding: 3px 8px;
+    border-radius: 3px;
+}
+
+.hwaccel-card-desc {
+    font-size: var(--fs-s);
+    color: var(--text-muted-color);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.hwaccel-card-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hwaccel-card-label {
+    font-size: var(--fs-xs);
+    color: var(--text-muted-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.hwaccel-req-list {
+    margin: 0;
+    padding-left: var(--space-m);
+    font-size: var(--fs-s);
+    color: var(--text-color);
+}
+
+.hwaccel-req-list li {
+    margin-bottom: 3px;
+    line-height: 1.4;
+}
+
+.hwaccel-pre {
+    background: var(--page-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-s);
+    padding: var(--space-s) var(--space-m);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.7rem;
+    color: var(--text-color);
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    line-height: 1.5;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.hwaccel-copy-btn {
+    align-self: flex-start;
+}

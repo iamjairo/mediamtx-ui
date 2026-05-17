@@ -1,35 +1,288 @@
-{$DOMAIN:localhost} {
-	# Dashboard UI
-	handle /* {
-		reverse_proxy mediamtxui:{$SERVER_PORT:3000}
-	}
+# ============================================================================
+# MediaMTX UI — Full Production Caddyfile
+# ============================================================================
+# Environment variables (set via Docker or .env):
+#   DOMAIN           — your domain (default: localhost)
+#   SERVER_PORT      — mediamtx-ui Express port (default: 3000)
+#   HLS_PORT         — MediaMTX HLS port (default: 8888)
+#   WEBRTC_PORT      — MediaMTX WebRTC port (default: 8889)
+#   RTSP_PORT        — MediaMTX RTSP port (default: 8554)
+#   API_PORT         — MediaMTX API port (default: 9997)
+#   SRT_PORT         — MediaMTX SRT port (default: 8890)
+#   RTMP_PORT        — MediaMTX RTMP port (default: 1935)
+#   PLAYBACK_PORT    — MediaMTX Playback port (default: 9996)
+#   METRICS_PORT     — MediaMTX Metrics port (default: 9998)
+#   GO2RTC_API_PORT  — Go2RTC API port (default: 1984)
+#   GO2RTC_RTSP_PORT — Go2RTC RTSP port (default: 8555)
+#   TLS_MODE         — "acme" for Let's Encrypt, "self_signed" for dev (default: self_signed)
+#   ACME_EMAIL       — email for Let's Encrypt registration
+# ============================================================================
 
-	# HLS streams
-	handle /hls/* {
-		reverse_proxy mediamtx:{$HLS_PORT:8888}
-	}
+{
+	# Admin API — enable for Caddy management via UI
+	admin 0.0.0.0:2019
 
-	# WebRTC API
-	handle /webrtc/* {
-		reverse_proxy mediamtx:{$WEBRTC_PORT:8889}
-	}
-
-	# WebSocket support for live updates
-	handle /ws/* {
-		reverse_proxy mediamtxui:{$SERVER_PORT:3000}
-	}
-
-	encode gzip zstd
-
-	header {
-		X-Content-Type-Options nosniff
-		X-Frame-Options DENY
-		Referrer-Policy strict-origin-when-cross-origin
-		-Server
-	}
-
-	log {
+	# Logging
+	log default {
 		output stdout
-		format console
+		format json
+		level INFO
+	}
+
+	# TLS / ACME
+	email {$ACME_EMAIL:admin@localhost}
+
+	# Performance
+	order rate_limit before basicauth
+
+	# Trusted proxy headers (Docker network)
+	servers {
+		trusted_proxies static 172.16.0.0/12 10.0.0.0/8 192.168.0.0/16
+		protocols h1 h2 h3
 	}
 }
+
+# ============================================================================
+# Main site
+# ============================================================================
+{$DOMAIN:localhost} {
+
+	# ------------------------------------------------------------------
+	# TLS configuration
+	# ------------------------------------------------------------------
+	tls {$ACME_EMAIL:admin@localhost} {
+		protocols tls1.2 tls1.3
+		ciphers TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	}
+
+	# ------------------------------------------------------------------
+	# Global security headers
+	# ------------------------------------------------------------------
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: data: https:; connect-src 'self' wss: ws: https:; font-src 'self' data:; frame-src 'self';"
+		-Server
+		-X-Powered-By
+	}
+
+	# ------------------------------------------------------------------
+	# Compression
+	# ------------------------------------------------------------------
+	encode {
+		zstd
+		gzip
+		minimum_length 256
+		match {
+			header Content-Type text/*
+			header Content-Type application/json*
+			header Content-Type application/javascript*
+			header Content-Type application/xml*
+			header Content-Type application/wasm*
+			header Content-Type image/svg+xml*
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# Request logging
+	# ------------------------------------------------------------------
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 168h
+		}
+		format json {
+			time_format iso8601
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# MediaMTX API proxy
+	# ------------------------------------------------------------------
+	handle /v3/* {
+		reverse_proxy mediamtx:{$API_PORT:9997} {
+			header_up Host {upstream_hostport}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+
+			transport http {
+				tls_insecure_skip_verify
+			}
+
+			# Health & retry
+			health_uri /v3/config/global/get
+			health_interval 30s
+			health_timeout 5s
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# HLS streaming
+	# ------------------------------------------------------------------
+	handle /hls/* {
+		header {
+			Access-Control-Allow-Origin "*"
+			Access-Control-Allow-Methods "GET, OPTIONS"
+			Access-Control-Allow-Headers "Range, Content-Type"
+			Access-Control-Expose-Headers "Content-Length, Content-Range"
+			Cache-Control "no-cache, no-store, must-revalidate"
+		}
+
+		reverse_proxy mediamtx:{$HLS_PORT:8888} {
+			header_up Host {upstream_hostport}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# WebRTC (WHIP/WHEP signaling)
+	# ------------------------------------------------------------------
+	handle /webrtc/* {
+		header {
+			Access-Control-Allow-Origin "*"
+			Access-Control-Allow-Methods "GET, POST, PATCH, DELETE, OPTIONS"
+			Access-Control-Allow-Headers "Content-Type, Authorization, If-Match"
+			Access-Control-Expose-Headers "Location, ETag, Link"
+		}
+
+		reverse_proxy mediamtx:{$WEBRTC_PORT:8889} {
+			header_up Host {upstream_hostport}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# Playback API (recordings)
+	# ------------------------------------------------------------------
+	handle /playback/* {
+		header {
+			Access-Control-Allow-Origin "*"
+			Access-Control-Allow-Methods "GET, OPTIONS"
+			Access-Control-Allow-Headers "Range, Content-Type"
+		}
+
+		reverse_proxy mediamtx:{$PLAYBACK_PORT:9996} {
+			header_up Host {upstream_hostport}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# Metrics endpoint (Prometheus)
+	# ------------------------------------------------------------------
+	handle /metrics* {
+		reverse_proxy mediamtx:{$METRICS_PORT:9998} {
+			header_up Host {upstream_hostport}
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# Go2RTC API proxy
+	# ------------------------------------------------------------------
+	handle /go2rtc/* {
+		uri strip_prefix /go2rtc
+		reverse_proxy go2rtc:{$GO2RTC_API_PORT:1984} {
+			header_up Host {upstream_hostport}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+		}
+	}
+
+	# Go2RTC WebSocket streams
+	handle /go2rtc/ws* {
+		reverse_proxy go2rtc:{$GO2RTC_API_PORT:1984} {
+			header_up Host {upstream_hostport}
+			header_up Connection {>Connection}
+			header_up Upgrade {>Upgrade}
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# WebSocket support (dashboard live updates)
+	# ------------------------------------------------------------------
+	handle /ws/* {
+		reverse_proxy mediamtxui:{$SERVER_PORT:3000} {
+			header_up Host {upstream_hostport}
+			header_up Connection {>Connection}
+			header_up Upgrade {>Upgrade}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+		}
+	}
+
+	# ------------------------------------------------------------------
+	# Dashboard UI (catch-all — must be last)
+	# ------------------------------------------------------------------
+	handle /* {
+		reverse_proxy mediamtxui:{$SERVER_PORT:3000} {
+			header_up Host {upstream_hostport}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+
+			# Sticky sessions for Express
+			lb_policy cookie {
+				name mediamtx_session
+				ttl 24h
+			}
+
+			# Health check
+			health_uri /
+			health_interval 30s
+			health_timeout 5s
+		}
+	}
+}
+
+# ============================================================================
+# RTSP TCP proxy (pass-through, no TLS termination)
+# ============================================================================
+:8554 {
+	reverse_proxy mediamtx:{$RTSP_PORT:8554} {
+		transport http {
+			tls_insecure_skip_verify
+		}
+	}
+}
+
+# ============================================================================
+# RTMP TCP proxy
+# ============================================================================
+:1935 {
+	reverse_proxy mediamtx:{$RTMP_PORT:1935}
+}
+
+# ============================================================================
+# SRT UDP proxy (layer 4 — requires Caddy with layer4 plugin)
+# Uncomment if using xcaddy with github.com/mholt/caddy-l4
+# ============================================================================
+# (layer4) {
+#     :8890 {
+#         route {
+#             proxy {
+#                 upstream mediamtx:{$SRT_PORT:8890}
+#             }
+#         }
+#     }
+# }

@@ -13,46 +13,48 @@ export default class StreamItem {
         if (this.element)
             this.destroy();
 
-        const label = (textContent) => {
-            const element = document.createElement("div");
-            element.className = 'stream-label';
-            element.textContent = textContent;
-            return element;
-        };
-
         const el = document.createElement("div");
         el.className = 'stream-item';
 
-        // Determine source type for protocol-specific styling
         const sourceType = this.data.source ? this.data.source.type : '';
         const protocolClass = this.getProtocolClass(sourceType);
         if (protocolClass) el.classList.add(protocolClass);
 
-        // Live status indicator
-        el.classList.add('status-live');
+        //--- top-left overlay: status dot + stream name
+        const overlayTop = document.createElement("div");
+        overlayTop.className = 'stream-overlay-top';
 
-        //--- header with name + type badge
-        const headerEl = document.createElement("div");
-        headerEl.className = 'stream-header';
-
-        const headerLeft = document.createElement("div");
-        headerLeft.className = 'stream-header-left';
+        const statusDot = document.createElement("div");
+        statusDot.className = 'stream-status-dot';
+        overlayTop.append(statusDot);
 
         const nameEl = document.createElement("div");
         nameEl.className = 'stream-name';
         nameEl.textContent = this.data.confName;
-        headerLeft.append(nameEl);
+        overlayTop.append(nameEl);
 
-        //--- type badge (protocol)
+        el.append(overlayTop);
+
+        //--- top-right overlay: protocol badge
         this.typeEl = document.createElement("div");
         this.typeEl.className = 'stream-type';
         if (protocolClass) this.typeEl.classList.add(protocolClass);
-        this.typeEl.textContent = this.data.source && this.data.tracks ? `${splitCamelCase(this.data.source.type).toUpperCase()} - ${this.data.tracks.join(', ')}` : '';
-        headerLeft.append(this.typeEl);
+        const typeText = this.data.source && this.data.source.type
+            ? splitCamelCase(this.data.source.type).toUpperCase()
+            : '';
+        this.typeEl.textContent = typeText;
+        el.append(this.typeEl);
 
-        headerEl.append(headerLeft);
+        //--- video element
+        this.video = new Video(this);
+        el.append(this.video.render());
+        requestAnimationFrame(() => this.video.init());
 
-        //--- viewers with eye icon
+        //--- bottom overlay: viewers + bytes
+        const overlayBottom = document.createElement("div");
+        overlayBottom.className = 'stream-overlay-bottom';
+
+        // viewers
         const viewersEl = document.createElement("div");
         viewersEl.className = 'stream-viewers';
 
@@ -67,48 +69,30 @@ export default class StreamItem {
         this.viewersNumberEl.textContent = this.data.readers.length;
         viewersEl.append(this.viewersNumberEl);
 
-        const labelViewersEl = label('watching');
-        viewersEl.append(labelViewersEl);
+        overlayBottom.append(viewersEl);
 
-        headerEl.append(viewersEl);
-        el.append(headerEl);
-
-        //--- video element
-        this.video = new Video(this);
-        el.append(this.video.render());
-        requestAnimationFrame(() => this.video.init());
-
-        //--- bytes footer
+        // bytes
         const bytesEl = document.createElement("div");
         bytesEl.className = 'stream-bytes';
 
-        //--- bytes received
         const bytesReceivedEl = document.createElement("div");
         bytesReceivedEl.className = 'stream-bytes-received';
-
-        const labelBytesReceivedEl = label('Received');
-        bytesReceivedEl.append(labelBytesReceivedEl);
-
-        this.bytesReceivedNumberEl = document.createElement("div");
+        this.bytesReceivedNumberEl = document.createElement("span");
         this.bytesReceivedNumberEl.className = 'stream-bytes-received-number';
-        this.bytesReceivedNumberEl.textContent = this.data.bytesReceived;
+        this.bytesReceivedNumberEl.textContent = (parseInt(this.data.bytesReceived) / 1048576).toFixed(1);
         bytesReceivedEl.append(this.bytesReceivedNumberEl);
         bytesEl.append(bytesReceivedEl);
 
-        //--- bytes sent
         const bytesSentEl = document.createElement("div");
         bytesSentEl.className = 'stream-bytes-sent';
-
-        const labelBytesSentEl = label('Sent');
-        bytesSentEl.append(labelBytesSentEl);
-
-        this.bytesSentNumberEl = document.createElement("div");
+        this.bytesSentNumberEl = document.createElement("span");
         this.bytesSentNumberEl.className = 'stream-bytes-sent-number';
-        this.bytesSentNumberEl.textContent = this.data.bytesSent;
+        this.bytesSentNumberEl.textContent = (parseInt(this.data.bytesSent) / 1048576).toFixed(1);
         bytesSentEl.append(this.bytesSentNumberEl);
         bytesEl.append(bytesSentEl);
 
-        el.append(bytesEl);
+        overlayBottom.append(bytesEl);
+        el.append(overlayBottom);
 
         return this.element = el;
     }
@@ -140,9 +124,8 @@ export default class StreamItem {
                 this.bytesSent = value;
 
             if (prop === 'type' || prop === 'tracks') {
-                if (this.data.source && this.data.tracks.length > 0) {
-                    this.typeEl.textContent = `${splitCamelCase(this.data.source.type).toUpperCase()} - ${this.data.tracks.join(', ')}`;
-                    // Update protocol class on type badge and card
+                if (this.data.source) {
+                    this.typeEl.textContent = splitCamelCase(this.data.source.type).toUpperCase();
                     const newProtocol = this.getProtocolClass(this.data.source.type);
                     ['protocol-rtsp', 'protocol-hls', 'protocol-webrtc', 'protocol-rtmp', 'protocol-srt'].forEach(cls => {
                         this.element.classList.remove(cls);
@@ -177,7 +160,7 @@ export default class StreamItem {
 
     set bytesReceived(value) {
         this._bytesReceived = value;
-        this.bytesReceivedNumberEl.textContent = (parseInt(this.bytesReceived) / 1048576).toFixed(2);
+        this.bytesReceivedNumberEl.textContent = (parseInt(this.bytesReceived) / 1048576).toFixed(1);
     }
 
     get bytesSent() {
@@ -186,7 +169,7 @@ export default class StreamItem {
 
     set bytesSent(value) {
         this._bytesSent = value;
-        this.bytesSentNumberEl.textContent = (parseInt(this.bytesSent) / 1048576).toFixed(2);
+        this.bytesSentNumberEl.textContent = (parseInt(this.bytesSent) / 1048576).toFixed(1);
     }
 
 }

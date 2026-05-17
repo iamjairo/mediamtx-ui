@@ -24,27 +24,33 @@ export default class StreamItem {
         this.destroy();
 
         this.element = document.createElement("div");
-        this.element.className = "path shrunk";
+        this.element.className = "path";
 
-        // Collapse-Button
-        this.editButton = document.createElement("button");
-        this.editButton.className = 'edit';
-        this.editButton.innerHTML = `${this.page.icons.svg['settings']} Edit path`;
-        this.editButton.onclick = () => this.collapse();
-        this.element.append(this.editButton);
+        // Collapse toggle button — placed directly on .path so it's positioned
+        // relative to the outer card (position: relative on .path)
+        this.collapseToggle = document.createElement("button");
+        this.collapseToggle.className = 'collapse-toggle';
+        this.collapseToggle.innerHTML = '&#9660; Collapse';
+        this.collapseToggle.onclick = () => this.toggleCollapse();
+        this.element.append(this.collapseToggle);
+
+        // --- Left side: path-main ---
+        this.mainElement = document.createElement("div");
+        this.mainElement.className = "path-main";
+        this.element.append(this.mainElement);
 
         // Delete-Button
         const deleteButton = document.createElement("button");
         deleteButton.className = 'delete';
         deleteButton.innerHTML = `${this.page.icons.svg['list-minus']} Delete path`;
         deleteButton.onclick = () => this.delete();
-        this.element.append(deleteButton);
+        this.mainElement.append(deleteButton);
 
         // Navigation
         this.navigation = new GroupNavigation(this, () => this.renderGroup());
         this.navigation.render();
         this.navigation.select('source');
-        this.element.append(this.navigation.element);
+        this.mainElement.append(this.navigation.element);
 
         // Name-Field
         const store = this.data;
@@ -65,9 +71,6 @@ export default class StreamItem {
             }
         });
 
-        this.items.name = nameItem;
-        this.element.append(nameItem.element);
-
         const sourceItem = new FormItem({
             parent: this,
             store: store,
@@ -82,10 +85,79 @@ export default class StreamItem {
 
         this.items.name = nameItem;
         this.items.source = sourceItem;
-        this.element.append(nameItem.element);
-        this.element.append(sourceItem.element);
+        this.mainElement.append(nameItem.element);
+        this.mainElement.append(sourceItem.element);
+
+        // --- Right side: path-preview ---
+        this.previewElement = document.createElement("div");
+        this.previewElement.className = "path-preview";
+        this.element.append(this.previewElement);
+
+        this.renderPreviewCard();
 
         return this.element;
+    }
+
+    renderPreviewCard() {
+        const streamName = this.name || 'stream';
+        const sourceVal = (this.data && this.data.source) ? this.data.source : 'publisher';
+
+        const card = document.createElement("div");
+        card.className = "stream-preview-card";
+
+        // Video area with placeholder
+        const videoArea = document.createElement("div");
+        videoArea.className = "preview-video-area";
+
+        const placeholder = document.createElement("div");
+        placeholder.className = "preview-placeholder";
+
+        const camIcon = document.createElement("div");
+        camIcon.className = "preview-cam-icon";
+        camIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 7l-7 5 7 5V7z"/>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>`;
+
+        const readyLabel = document.createElement("span");
+        readyLabel.textContent = "Stream Ready";
+
+        placeholder.append(camIcon, readyLabel);
+        videoArea.append(placeholder);
+        card.append(videoArea);
+
+        // Info rows
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "preview-info";
+
+        const rows = [
+            { label: 'Name', value: streamName, cls: 'preview-value' },
+            { label: 'Protocol', value: sourceVal, cls: 'preview-value' },
+            { label: 'Status', value: 'Live', cls: 'preview-value-status' }
+        ];
+
+        rows.forEach(({ label, value, cls }) => {
+            const row = document.createElement("div");
+            row.className = "preview-info-row";
+
+            const labelSpan = document.createElement("span");
+            labelSpan.className = "preview-label";
+            labelSpan.textContent = label;
+
+            const valueSpan = document.createElement("span");
+            valueSpan.className = cls;
+            valueSpan.textContent = value;
+
+            row.append(labelSpan, valueSpan);
+            infoDiv.append(row);
+        });
+
+        // Keep protocol and status value spans accessible for updates
+        this._previewNameSpan = infoDiv.querySelectorAll('.preview-value')[0];
+        this._previewProtocolSpan = infoDiv.querySelectorAll('.preview-value')[1];
+
+        card.append(infoDiv);
+        this.previewElement.append(card);
     }
 
     renderGroup() {
@@ -97,10 +169,9 @@ export default class StreamItem {
         const inputTypes = this.schema.inputType || {};
         const locks = this.schema.locked || [];
 
-        this.groupsElement ? this.groupsElement.remove() : null;
         this.groupsElement = document.createElement("div");
         this.groupsElement.className = "groups";
-        this.element.append(this.groupsElement);
+        this.mainElement.append(this.groupsElement);
 
         if (this.group.columns) {
             this.group.columns.forEach(col => {
@@ -151,13 +222,23 @@ export default class StreamItem {
         }
     }
 
+    toggleCollapse() {
+        const isCollapsed = this.element.classList.toggle('collapsed');
+        if (isCollapsed) {
+            this.collapseToggle.innerHTML = '&#9654; Expand';
+        } else {
+            this.collapseToggle.innerHTML = '&#9660; Collapse';
+        }
+    }
+
     collapse() {
-        this.element.classList.remove('shrunk');
-        this.editButton.classList.add('hidden');
+        // Legacy method kept for compatibility — now just toggles
+        this.toggleCollapse();
     }
 
     expand() {
-
+        this.element.classList.remove('collapsed');
+        this.collapseToggle.innerHTML = '&#9660; Collapse';
     }
 
     delete() {

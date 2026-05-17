@@ -1,0 +1,157 @@
+FROM ubuntu:24.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    cmake \
+    git \
+    nasm \
+    yasm \
+    pkg-config \
+    wget \
+    # Intel VAAPI / QSV
+    libva-dev \
+    libva-drm2 \
+    libva-x11-2 \
+    intel-media-va-driver-non-free \
+    libmfx-dev \
+    libvpl-dev \
+    # GStreamer
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-vaapi \
+    gstreamer1.0-tools \
+    # FFmpeg deps
+    libx264-dev \
+    libx265-dev \
+    libvpx-dev \
+    libfdk-aac-dev \
+    libmp3lame-dev \
+    libopus-dev \
+    libass-dev \
+    libfreetype6-dev \
+    libsdl2-dev \
+    libdrm-dev \
+    libsrt-gnutls-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build FFmpeg with full hardware acceleration
+ARG FFMPEG_VERSION=7.1
+RUN cd /tmp && \
+    wget -q https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+    tar xf ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+    cd ffmpeg-${FFMPEG_VERSION} && \
+    ./configure \
+        --prefix=/usr/local \
+        --enable-gpl \
+        --enable-nonfree \
+        --enable-version3 \
+        --enable-shared \
+        --enable-pic \
+        # Hardware acceleration
+        --enable-vaapi \
+        --enable-libmfx \
+        --enable-libvpl \
+        --enable-libdrm \
+        # Codecs
+        --enable-libx264 \
+        --enable-libx265 \
+        --enable-libvpx \
+        --enable-libfdk-aac \
+        --enable-libmp3lame \
+        --enable-libopus \
+        --enable-libass \
+        --enable-libfreetype \
+        --enable-libsrt \
+        # Protocols
+        --enable-protocol=rtsp \
+        --enable-protocol=rtmp \
+        --enable-protocol=hls \
+        --enable-protocol=srt \
+        --enable-protocol=rtp \
+        --enable-protocol=file \
+        --enable-protocol=pipe \
+        # Formats
+        --enable-demuxer=rtsp \
+        --enable-demuxer=mpegts \
+        --enable-demuxer=flv \
+        --enable-muxer=rtsp \
+        --enable-muxer=mpegts \
+        --enable-muxer=flv \
+        --enable-muxer=hls \
+        --enable-muxer=segment \
+        --enable-muxer=mp4 \
+        # Filters
+        --enable-filter=scale \
+        --enable-filter=scale_vaapi \
+        --enable-filter=deinterlace_vaapi \
+        --enable-filter=overlay \
+        --enable-filter=drawtext \
+        --enable-filter=fps \
+    && make -j$(nproc) && make install && ldconfig
+
+
+# ============================================================================
+# Runtime image
+# ============================================================================
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LIBVA_DRIVER_NAME=iHD
+ENV LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    # Intel VAAPI runtime
+    libva2 \
+    libva-drm2 \
+    libva-x11-2 \
+    intel-media-va-driver-non-free \
+    libmfx1 \
+    libvpl2 \
+    # GStreamer runtime
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-vaapi \
+    gstreamer1.0-tools \
+    libgstreamer1.0-0 \
+    libgstreamer-plugins-base1.0-0 \
+    # FFmpeg runtime deps
+    libx264-164 \
+    libx265-199 \
+    libvpx9 \
+    libfdk-aac2 \
+    libmp3lame0 \
+    libopus0 \
+    libass9 \
+    libfreetype6 \
+    libdrm2 \
+    libsrt1.5-gnutls \
+    # Utils
+    vainfo \
+    intel-gpu-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy FFmpeg from builder
+COPY --from=builder /usr/local/bin/ff* /usr/local/bin/
+COPY --from=builder /usr/local/lib/libav* /usr/local/lib/
+COPY --from=builder /usr/local/lib/libsw* /usr/local/lib/
+COPY --from=builder /usr/local/lib/libpostproc* /usr/local/lib/
+COPY --from=builder /usr/local/lib/pkgconfig/ /usr/local/lib/pkgconfig/
+COPY --from=builder /usr/local/include/ /usr/local/include/
+RUN ldconfig
+
+# Verify installations
+RUN ffmpeg -version && \
+    ffmpeg -hwaccels && \
+    gst-launch-1.0 --version && \
+    vainfo --display drm --device /dev/dri/renderD128 2>/dev/null || true
+
+ENTRYPOINT ["ffmpeg"]

@@ -12,6 +12,7 @@ export default class Server extends Events {
 
         this.app = app;
         this.mediamtx = this.app.mediamtx;
+        this.go2rtc = this.app.go2rtc;
         this.publicDir = this.app.publicDir;
         this.dataDir = this.app.dataDir;
 
@@ -56,6 +57,9 @@ export default class Server extends Events {
         // Mediamtx API Proxy
         this.engine.use('/mediamtx', this.mediamtx.proxy.router);
         this.engine.use('/mediamtx/metrics', this.mediamtx.metrics.router);
+
+        // Go2RTC API Proxy
+        this.engine.use('/go2rtc', this.go2rtc.proxy.router);
 
         // API routes
         this.routes = new Routes(this);

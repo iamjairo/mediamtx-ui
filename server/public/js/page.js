@@ -61,12 +61,29 @@ export default class Page {
         }
 
         this.tabs = {
+            dashboard: Tabs.DashboardTab,
             overview: Tabs.OverviewTab,
             streams: Tabs.StreamsTab,
             sources: Tabs.SourcesTab,
             server: Tabs.ServerTab,
             path: Tabs.PathDefaultsTab,
-            users: Tabs.UsersTab
+            users: Tabs.UsersTab,
+            hardware: Tabs.HardwareTab,
+            caddy: Tabs.CaddyTab,
+            docker: Tabs.DockerTab,
+            camerawall: Tabs.CameraWallTab,
+            recordings: Tabs.RecordingsTab,
+            logs: Tabs.LogsTab,
+            mtxsources: Tabs.MediaMTXSourcesTab,
+            go2rtcsources: Tabs.Go2RTCSourcesTab,
+            streamviewer: Tabs.StreamViewerTab,
+            camerafocus: Tabs.CameraFocusTab,
+            apidocs: Tabs.ApiDocsTab,
+            snapshots: Tabs.SnapshotsTab,
+            hwaccel: Tabs.HwAccelTab,
+            scrypted: Tabs.ScryptedTab,
+            matterbridge: Tabs.MatterBridgeTab,
+            homeassistant: Tabs.HomeAssistantTab,
         };
 
         await this.render();

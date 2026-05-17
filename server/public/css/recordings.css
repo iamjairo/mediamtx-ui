@@ -1,0 +1,404 @@
+/* ── Recordings Tab ─────────────────────────────────────────────────────── */
+
+.tab.recordings-tab {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header */
+.rec-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-m) 0;
+}
+
+.rec-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+}
+
+.rec-title {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.rec-subtitle {
+    font-size: var(--fs-s);
+    color: var(--text-muted-color);
+    margin: 0;
+}
+
+.rec-header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+}
+
+.rec-count-badge {
+    font-size: var(--fs-xs);
+    color: var(--text-muted-color);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-s);
+    padding: 4px 10px;
+    font-weight: 600;
+}
+
+.rec-mock-badge {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    margin-left: 6px;
+}
+
+/* Filters */
+.rec-filter-bar {
+    display: flex;
+    gap: var(--space-m);
+    margin-bottom: var(--space-m);
+    align-items: center;
+}
+
+.rec-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-s);
+    padding: 6px 12px;
+    flex: 1 1 300px;
+    min-width: 180px;
+    max-width: 360px;
+    color: var(--text-muted-color);
+}
+
+.rec-search {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    font-size: var(--fs-s);
+    width: 100%;
+    font-family: inherit;
+}
+
+.rec-search::placeholder {
+    color: var(--text-muted-color);
+}
+
+.rec-filter-bar select.rec-status-select {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-s);
+    color: var(--text-color);
+    font-size: var(--fs-s);
+    padding: 6px 12px;
+    font-family: inherit;
+    cursor: pointer;
+    width: 160px;
+    flex-shrink: 0;
+    margin-left: 0;
+}
+
+.rec-status-select option {
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+/* Grid */
+.rec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-m);
+}
+
+/* Card */
+.rec-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.rec-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+}
+
+/* Card preview area */
+.rec-card-preview {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--page-bg);
+    overflow: hidden;
+}
+
+.rec-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted-color);
+    opacity: 0.3;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(168, 85, 247, 0.05));
+}
+
+.rec-card-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+}
+
+.rec-card-duration {
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px 6px;
+    border-radius: 3px;
+    z-index: 2;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.rec-card-live-pill {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    background: #ef4444;
+    padding: 2px 8px;
+    border-radius: 3px;
+    z-index: 2;
+    animation: rec-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes rec-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.rec-card-play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 3;
+}
+
+.rec-card:hover .rec-card-play-overlay {
+    opacity: 1;
+}
+
+.rec-card-play-overlay:hover {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Card body */
+.rec-card-body {
+    padding: var(--space-m);
+}
+
+.rec-card-name {
+    font-size: var(--fs-m);
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 2px;
+}
+
+.rec-card-path {
+    font-size: var(--fs-xs);
+    color: var(--text-muted-color);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    margin-bottom: var(--space-s);
+}
+
+.rec-card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+}
+
+.rec-card-status {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+.rec-status-complete {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+}
+
+.rec-status-live {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.rec-status-failed {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+}
+
+.rec-card-time {
+    font-size: var(--fs-xs);
+    color: var(--text-muted-color);
+}
+
+/* Empty state */
+.rec-empty {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-m);
+    padding: var(--space-xl) 0;
+    color: var(--text-muted-color);
+    font-size: var(--fs-s);
+}
+
+/* ── Modal ──────────────────────────────────────────────────────────────── */
+.rec-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rec-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.rec-modal-content {
+    position: relative;
+    width: 90vw;
+    max-width: 1000px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+}
+
+.rec-modal-close {
+    position: absolute;
+    top: var(--space-m);
+    right: var(--space-m);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 1;
+    transition: background 0.2s;
+}
+
+.rec-modal-close:hover {
+    background: rgba(239, 68, 68, 0.8);
+}
+
+.rec-modal-video-wrap {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+}
+
+.rec-modal-video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.rec-modal-info {
+    padding: var(--space-l);
+}
+
+.rec-modal-info h3 {
+    font-size: var(--fs-l);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 var(--space-m) 0;
+}
+
+.rec-modal-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-s);
+}
+
+.rec-modal-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid var(--card-border);
+    font-size: var(--fs-s);
+}
+
+.rec-modal-row span:first-child {
+    color: var(--text-muted-color);
+}
+
+.rec-modal-row span:last-child {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.rec-mono {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .rec-grid {
+        grid-template-columns: 1fr;
+    }
+    .rec-filter-bar {
+        flex-direction: column;
+    }
+    .rec-search-wrap {
+        max-width: none;
+    }
+    .rec-modal-meta {
+        grid-template-columns: 1fr;
+    }
+}

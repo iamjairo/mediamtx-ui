@@ -2,6 +2,7 @@ import path from "path";
 
 import Events from './lib/EventEmitter.js';
 import MediaMTX from './lib/MediaMTX.js';
+import Go2RTC from './lib/Go2RTC.js';
 import Server from "./lib/Server.js";
 import Auth from "./lib/Auth.js";
 
@@ -20,6 +21,10 @@ export default class Main extends Events {
         this.mediamtxApiUser = process.env['MEDIAMTX_API_USER'] || false;
         this.mediamtxApiPassword = process.env['MEDIAMTX_API_PASSWORD'] || false;
 
+        this.go2rtcApiUrlBase = process.env['GO2RTC_API_URL_BASE'] ?? `http://go2rtc:1984`;
+        this.go2rtcApiUser = process.env['GO2RTC_API_USER'] || false;
+        this.go2rtcApiPassword = process.env['GO2RTC_API_PASSWORD'] || false;
+
         process.on('SIGINT', async () => {
             console.log('Stoppe…');
             await this.cleanup();
@@ -28,6 +33,7 @@ export default class Main extends Events {
 
         this.auth = new Auth(this);
         this.mediamtx = new MediaMTX(this);
+        this.go2rtc = new Go2RTC(this);
         //this.streams = new Streams(this);
         this.server = new Server(this);
 
