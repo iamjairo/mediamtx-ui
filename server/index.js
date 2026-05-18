@@ -14,7 +14,6 @@ export default class Main extends Events {
         super();
         this.__dirname = process.cwd();
         this.dataDir = path.join(this.__dirname, "../data");
-        this.publicDir = path.join(this.__dirname, "public");
 
         this.mediamtxApiUrlBase = process.env['MEDIAMTX_API_URL_BASE'] ?? `http://mediamtx:9997/v3`;
         this.mediamtxMetricsUrlBase = process.env['MEDIAMTX_METRICS_URL_BASE'] ?? `http://mediamtx:9998/metrics`;

@@ -15,39 +15,35 @@ export default class Server extends Events {
         this.app = app;
         this.mediamtx = this.app.mediamtx;
         this.go2rtc = this.app.go2rtc;
-        this.publicDir = this.app.publicDir;
         this.dataDir = this.app.dataDir;
 
-        // Prefer the built React client (client/dist) when it exists; fall back
-        // to the legacy vanilla server/public/ tree. CLIENT_DIST overrides.
-        const clientDist = process.env.CLIENT_DIST
+        this.clientDist = process.env.CLIENT_DIST
             || path.join(process.cwd(), '..', 'client', 'dist');
-        this.clientDist = fs.existsSync(path.join(clientDist, 'index.html')) ? clientDist : null;
-        this.staticDir = this.clientDist || this.publicDir;
-        console.log(`SERVING STATIC FROM `.padEnd(30, '.'), this.staticDir);
+        const indexPath = path.join(this.clientDist, 'index.html');
+        if (!fs.existsSync(indexPath)) {
+            throw new Error(`React build not found at ${this.clientDist}. Run \`npm run build\` from the repo root.`);
+        }
+        console.log(`SERVING STATIC FROM `.padEnd(30, '.'), this.clientDist);
 
         this.port = process.env.SERVER_PORT || 3000;
 
         this.engine = express();
         this.engine.use(express.json());
 
-        this.engine.use(express.static(this.staticDir));
+        this.engine.use(express.static(this.clientDist));
 
-        // SPA fallback for the React client — runs BEFORE auth so the shell
-        // (incl. login screen) loads when unauthenticated. Deep links like
-        // /dashboard, /streamviewer that don't match a static file get
-        // index.html so BrowserRouter can take over.
-        if (this.clientDist) {
-            const indexHtml = fs.readFileSync(path.join(this.clientDist, 'index.html'));
-            const apiPrefixes = ['/mediamtx', '/go2rtc', '/api', '/auth',
-                '/login', '/logout', '/csrf-token', '/settings', '/images', '/help'];
-            this.engine.use((req, res, next) => {
-                if (req.method !== 'GET') return next();
-                if (apiPrefixes.some((p) => req.path === p || req.path.startsWith(p + '/'))) return next();
-                if (path.extname(req.path)) return next();
-                res.type('html').send(indexHtml);
-            });
-        }
+        // SPA fallback — runs BEFORE auth so the React shell (incl. login
+        // screen) loads when unauthenticated. Deep links like /dashboard,
+        // /streamviewer fall through to index.html and BrowserRouter takes over.
+        const indexHtml = fs.readFileSync(indexPath);
+        const apiPrefixes = ['/mediamtx', '/go2rtc', '/api', '/auth',
+            '/login', '/logout', '/csrf-token', '/settings', '/images', '/help'];
+        this.engine.use((req, res, next) => {
+            if (req.method !== 'GET') return next();
+            if (apiPrefixes.some((p) => req.path === p || req.path.startsWith(p + '/'))) return next();
+            if (path.extname(req.path)) return next();
+            res.type('html').send(indexHtml);
+        });
 
         this.csrfProtection = csrf();
 
