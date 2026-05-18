@@ -854,3 +854,44 @@
 @media (max-width: 700px) {
   .iot-dashboard .iot-cctv-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── Home Assistant tab — bare iframe, no chrome ─────────────────────────── */
+/* iframes have no intrinsic width (default 300px) and body is `display: flex`,
+   so .page/.main-content shrink to fit. Anchor widths to viewport-derived
+   units to bypass the shrink chain. Also override .tab's max-width: 1400px
+   and margin: auto for true full-bleed. */
+.tab.ha-tab-bare {
+  width: calc(100vw - var(--sidebar-width));
+  min-width: calc(100vw - var(--sidebar-width));
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ha-iframe.ha-iframe-fill {
+  flex: 1;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  background: #0f172a;
+  min-height: calc(100vh - var(--header-height, 64px) - 32px);
+}
+.ha-empty-min {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--text-muted-color, #94a3b8);
+  padding: 60px 24px;
+}
+.ha-empty-min h3 {
+  margin: 8px 0 4px;
+  font-size: 18px;
+  color: var(--text-color, #e2e8f0);
+}
+.ha-empty-min p { margin: 0; max-width: 420px; font-size: 13px; }
+.ha-empty-min .phase2-btn { margin-top: 8px; }
