@@ -644,6 +644,64 @@ function LEDPanel() {
   );
 }
 
+// ── CCTV monitor strip (6-up) ────────────────────────────────────────────────
+function CCTVMonitor({ streams, navigate }) {
+  // Pad to 6 slots so the grid always renders evenly. Real streams come first,
+  // empty slots after.
+  const slots = Array.from({ length: 6 }, (_, i) => {
+    const s = streams[i];
+    if (!s) return { empty: true, key: `empty-${i}` };
+    const name = s.name || s.confName || `Camera ${i + 1}`;
+    const sourceType = s.source?.type || '';
+    const proto = sourceType ? sourceType.replace(/Source$/, '').toUpperCase() : 'RTSP';
+    return { name, proto, key: name };
+  });
+
+  return (
+    <IotCard
+      title="CCTV Monitor"
+      headerExtra={
+        <button className="iot-card-pill" onClick={() => navigate('/camerawall')}>
+          Open Camera Wall ›
+        </button>
+      }
+    >
+      <div className="iot-cctv-grid">
+        {slots.map((slot, i) => (
+          <button
+            key={slot.key}
+            className={`iot-cctv-cell${slot.empty ? ' empty' : ''}`}
+            onClick={() => !slot.empty && navigate('/camerawall')}
+            disabled={slot.empty}
+          >
+            <div className="iot-cctv-thumb">
+              {slot.empty ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="6" width="15" height="12" rx="2"/>
+                  <path d="M17 10l4-2.5v9L17 14"/>
+                </svg>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                    <rect x="2" y="6" width="15" height="12" rx="2"/>
+                    <path d="M17 10l4-2.5v9L17 14"/>
+                  </svg>
+                  <span className="iot-cctv-live">● LIVE</span>
+                  <span className="iot-cctv-proto">{slot.proto}</span>
+                </>
+              )}
+            </div>
+            <div className="iot-cctv-name">
+              <span className={`iot-cctv-dot${slot.empty ? '' : ' on'}`}></span>
+              <span>{slot.empty ? 'No camera' : slot.name}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </IotCard>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function DashboardTab() {
   const navigate = useNavigate();
@@ -699,6 +757,11 @@ export default function DashboardTab() {
           <LEDPanel />
           <WeatherPanel />
         </div>
+      </div>
+
+      {/* CCTV strip — 6 equal-size cameras */}
+      <div className="iot-cctv-row">
+        <CCTVMonitor streams={streams} navigate={navigate} />
       </div>
     </div>
   );

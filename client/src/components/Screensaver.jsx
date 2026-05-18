@@ -81,8 +81,8 @@ export default function Screensaver() {
           <span>{mm}</span>
         </div>
         <div className="screensaver-date">{dateStr}</div>
-        <div className="screensaver-hint">Touch or move to dismiss</div>
       </div>
+      <div className="screensaver-hint">Touch or move to dismiss</div>
     </div>
   );
 }
