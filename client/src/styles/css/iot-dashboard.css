@@ -855,14 +855,27 @@
   .iot-dashboard .iot-cctv-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ── Home Assistant tab — bare iframe, no chrome ─────────────────────────── */
-/* iframes have no intrinsic width (default 300px) and body is `display: flex`,
-   so .page/.main-content shrink to fit. Anchor widths to viewport-derived
-   units to bypass the shrink chain. Also override .tab's max-width: 1400px
-   and margin: auto for true full-bleed. */
-.tab.ha-tab-bare {
+/* ── Global layout fix: prevent .main-content from shrinking to content ──── */
+/* body is display:flex which makes .page width content-driven. When a tab's
+   content is narrow (logs, users, embedded iframes), the whole chain
+   collapses. Anchoring .main-content to viewport units keeps every tab at
+   full width regardless of its content. */
+.main-content {
   width: calc(100vw - var(--sidebar-width));
   min-width: calc(100vw - var(--sidebar-width));
+  box-sizing: border-box;
+}
+.sidebar.collapsed ~ .main-content {
+  width: calc(100vw - var(--sidebar-collapsed-width, 60px));
+  min-width: calc(100vw - var(--sidebar-collapsed-width, 60px));
+}
+
+/* Bump tab max-widths so cards/forms fill more of wide screens. The 1200-1400
+   defaults were too narrow for 1600+ viewports. */
+.tab { max-width: 1700px; }
+
+/* ── Home Assistant + Scrypted tab — bare iframe, no chrome ──────────────── */
+.tab.ha-tab-bare {
   max-width: none;
   margin: 0;
   padding: 0;
