@@ -142,21 +142,6 @@ const Icons = {
       <polyline points="18 3 22 7 18 11"/><polyline points="18 13 22 17 18 21"/>
     </svg>
   ),
-  download: (
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2">
-      <path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/>
-    </svg>
-  ),
-  upload: (
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2">
-      <path d="M12 3v14"/><path d="m6 9 6-6 6 6"/><path d="M5 21h14"/>
-    </svg>
-  ),
-  latency: (
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="2">
-      <path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-    </svg>
-  ),
 };
 
 // ── SVG Circular Dial ─────────────────────────────────────────────────────────
@@ -659,92 +644,10 @@ function LEDPanel() {
   );
 }
 
-// ── Router/Server stats panel (top-right) ────────────────────────────────────
-function RouterStatsPanel({ streams, caddyStatus, dockerContainers }) {
-  // Live stats from the MediaMTX backend dressed in router clothing.
-  // When the backend is unreachable, the mock data shines through.
-  const dl = streams.length ? (153.65 - streams.length * 0.4).toFixed(2) : '153.65';
-  const ul = streams.length ? (198.55 - streams.length * 0.6).toFixed(2) : '198.55';
-  const lat = caddyStatus?.running ? '9' : '12';
-  return (
-    <IotCard
-      title="Network"
-      headerExtra={<span className="iot-card-menu">⋯</span>}
-    >
-      <div className="iot-router-grid">
-        <div className="iot-router-stat">
-          <div className="iot-router-stat-value green">{dl}<span className="muted"> Mbps</span></div>
-          <div className="iot-router-stat-label">{Icons.download}{' '}Download</div>
-        </div>
-        <div className="iot-router-stat">
-          <div className="iot-router-stat-value blue">{ul}<span className="muted"> Mbps</span></div>
-          <div className="iot-router-stat-label">{Icons.upload}{' '}Upload</div>
-        </div>
-        <div className="iot-router-stat">
-          <div className="iot-router-stat-value amber">{lat}<span className="muted">ms</span></div>
-          <div className="iot-router-stat-label">{Icons.latency}{' '}Idle Latency</div>
-        </div>
-      </div>
-    </IotCard>
-  );
-}
-
-// ── Electricity / bandwidth chart ────────────────────────────────────────────
-function BandwidthChart() {
-  // Stable seeded curve — same look across renders.
-  const points = Array.from({ length: 24 }, (_, i) => {
-    const x = i / 23;
-    const y = 50 + Math.sin(i * 0.55) * 20 + Math.cos(i * 0.3) * 12 + (i > 14 ? 8 : 0);
-    return [x * 100, 100 - y];
-  });
-  const pathD = points.reduce((acc, [x, y], i) => {
-    if (i === 0) return `M ${x} ${y}`;
-    const [px, py] = points[i - 1];
-    const cx1 = px + (x - px) / 2;
-    const cx2 = px + (x - px) / 2;
-    return `${acc} C ${cx1} ${py}, ${cx2} ${y}, ${x} ${y}`;
-  }, '');
-  const areaD = `${pathD} L 100 100 L 0 100 Z`;
-
-  return (
-    <IotCard
-      title="Bandwidth"
-      headerExtra={<span className="iot-card-pill">{Icons.calendar}{' '}Past 6 hours ▾</span>}
-    >
-      <div className="iot-chart-wrap">
-        <div className="iot-chart-axis-y">
-          {['100%', '75%', '50%', '25%', '0%'].map((v) => <span key={v}>{v}</span>)}
-        </div>
-        <svg className="iot-chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.4"/>
-              <stop offset="100%" stopColor="#22d3ee" stopOpacity="0"/>
-            </linearGradient>
-          </defs>
-          {[20, 40, 60, 80].map((y) => (
-            <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="rgba(148,163,184,0.08)" strokeWidth="0.2"/>
-          ))}
-          <path d={areaD} fill="url(#chartFill)"/>
-          <path d={pathD} fill="none" stroke="#22d3ee" strokeWidth="0.6" vectorEffect="non-scaling-stroke"/>
-          {points.filter((_, i) => i % 4 === 0).map(([x, y], i) => (
-            <circle key={i} cx={x} cy={y} r="0.6" fill="#22d3ee"/>
-          ))}
-        </svg>
-      </div>
-      <div className="iot-chart-axis-x">
-        {['-6h', '-5h', '-4h', '-3h', '-2h', '-1h', 'now'].map((t) => <span key={t}>{t}</span>)}
-      </div>
-    </IotCard>
-  );
-}
-
 // ── Main component ────────────────────────────────────────────────────────────
 export default function DashboardTab() {
   const navigate = useNavigate();
   const [streams, setStreams] = useState([]);
-  const [caddyStatus, setCaddyStatus] = useState(null);
-  const [dockerContainers, setDockerContainers] = useState([]);
   const [activeRoom, setActiveRoom] = useState('workstation');
 
   async function loadData() {
@@ -753,19 +656,6 @@ export default function DashboardTab() {
       if (res?.ok) {
         const data = await res.json();
         setStreams(data.items || []);
-      }
-    } catch (_) {}
-
-    try {
-      const res = await fm.fetch('/api/caddy/status');
-      if (res?.ok) setCaddyStatus(await res.json());
-    } catch (_) {}
-
-    try {
-      const res = await fm.fetch('/api/docker/containers');
-      if (res?.ok) {
-        const data = await res.json();
-        setDockerContainers(data.containers || data || []);
       }
     } catch (_) {}
   }
@@ -806,15 +696,9 @@ export default function DashboardTab() {
 
         {/* Right column */}
         <div className="dash-iot-right">
-          <RouterStatsPanel streams={streams} caddyStatus={caddyStatus} dockerContainers={dockerContainers} />
           <LEDPanel />
-          <BandwidthChart />
+          <WeatherPanel />
         </div>
-      </div>
-
-      {/* Animated weather — moved to bottom full-width row */}
-      <div className="iot-weather-row">
-        <WeatherPanel />
       </div>
     </div>
   );
