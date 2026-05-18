@@ -74,7 +74,71 @@ export function getMockResponse(url) {
   const u = url.startsWith('http') ? new URL(url) : new URL(url, window.location.origin);
   const path = u.pathname + (u.search || '');
   if (path === '/settings' || path === '/mediamtx/config/global/get')
-    return jsonResponse({ hlsAddress: ':8888', webrtcAddress: ':8889', rtspAddress: ':8554' });
+    return jsonResponse({
+      // Network addresses
+      apiAddress: ':9997', metricsAddress: ':9998', pprofAddress: ':9999',
+      rtspAddress: ':8554', rtspsAddress: ':8322',
+      rtmpAddress: ':1935', rtmpsAddress: ':1936',
+      hlsAddress: ':8888', webrtcAddress: ':8889', srtAddress: ':8890',
+      // Logging
+      logLevel: 'info', logDestinations: ['stdout'], logFile: 'mediamtx.log',
+      // Authentication
+      authMethod: 'internal', authInternalUsers: [],
+      // Read/write
+      readTimeout: '10s', writeTimeout: '10s', writeQueueSize: 512,
+      udpMaxPayloadSize: 1472,
+      // Playback
+      playback: false, playbackAddress: ':9996',
+      // RTSP
+      rtsp: true, rtsps: true,
+      rtspEncryption: 'no', rtspTransports: ['udp', 'multicast', 'tcp'],
+      // RTMP
+      rtmp: true, rtmpEncryption: 'no',
+      // HLS
+      hls: true, hlsEncryption: false, hlsServerKey: '', hlsServerCert: '',
+      hlsAllowOrigin: '*', hlsAlwaysRemux: false, hlsVariant: 'lowLatency',
+      hlsSegmentCount: 7, hlsSegmentDuration: '1s', hlsPartDuration: '200ms',
+      hlsSegmentMaxSize: '50M',
+      // WebRTC
+      webrtc: true, webrtcEncryption: false,
+      webrtcAllowOrigin: '*', webrtcICEServers2: [{ url: 'stun:stun.l.google.com:19302' }],
+      // SRT
+      srt: true,
+    });
+  if (path === '/mediamtx/config/pathdefaults/get')
+    return jsonResponse({
+      // Source
+      source: 'publisher', sourceRedirect: '', sourceFingerprint: '',
+      sourceOnDemand: false, sourceOnDemandStartTimeout: '10s', sourceOnDemandCloseAfter: '10s',
+      // Always available
+      alwaysAvailable: false, alwaysAvailableFile: '', alwaysAvailableTracks: [],
+      // I/O
+      maxReaders: 0, srtReadPassphrase: '', srtPublishPassphrase: '',
+      useAbsoluteTimestamp: false, overridePublisher: true, rtspDemuxMpegts: true,
+      // Recording
+      record: false, recordPath: '~/Movies/mediamtx/%path/%Y-%m-%d_%H-%M-%S-%f',
+      recordFormat: 'fmp4', recordMaxPartSize: '50M',
+      recordPartDuration: '1s', recordSegmentDuration: '1h', recordDeleteAfter: '24h',
+      // RTSP
+      rtspTransport: 'automatic', rtspAnyPort: false, rtspRangeType: '',
+      rtspRangeStart: '', rtspUDPSourcePortRange: '',
+      // RTP
+      rtpSDP: '',
+      // WebRTC / WHEP
+      whepBearerToken: '', whepSTUNGatherTimeout: '5s',
+      whepHandshakeTimeout: '10s', whepTrackGatherTimeout: '3s',
+      // Hooks — lifecycle
+      runOnInit: '', runOnInitRestart: false,
+      runOnDemand: '', runOnDemandRestart: false,
+      runOnDemandStartTimeout: '10s', runOnDemandCloseAfter: '10s', runOnUnDemand: '',
+      // Hooks — stream events
+      runOnReady: '', runOnReadyRestart: false, runOnNotReady: '',
+      runOnRead: '', runOnReadRestart: false, runOnUnread: '',
+      // Hooks — recording events
+      runOnRecordSegmentCreate: '', runOnRecordSegmentComplete: '',
+    });
+  if (path === '/mediamtx/config/paths/list')
+    return jsonResponse({ pageCount: 1, itemCount: MOCK_PATHS.length, items: MOCK_PATHS });
   if (path === '/mediamtx/paths/list')
     return jsonResponse({ pageCount: 1, itemCount: MOCK_PATHS.length, items: MOCK_PATHS });
   if (path === '/mediamtx/recordings/list')
