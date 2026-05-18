@@ -17,6 +17,7 @@ import ServerTab from './components/Tabs/ServerTab.jsx';
 import PathTab from './components/Tabs/PathTab.jsx';
 import StreamsTab from './components/Tabs/StreamsTab.jsx';
 import UsersTab from './components/Tabs/UsersTab.jsx';
+import SettingsTab from './components/Tabs/SettingsTab.jsx';
 import StreamViewerTab from './components/Tabs/StreamViewerTab.jsx';
 import CameraWallTab from './components/Tabs/CameraWallTab.jsx';
 import CameraFocusTab from './components/Tabs/CameraFocusTab.jsx';
@@ -45,6 +46,7 @@ const PORTED = {
   path: PathTab,
   streams: StreamsTab,
   users: UsersTab,
+  integrations: SettingsTab,
   streamviewer: StreamViewerTab,
   camerawall: CameraWallTab,
   camerafocus: CameraFocusTab,

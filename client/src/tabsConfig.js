@@ -23,6 +23,7 @@ export const TABS = [
   { name: 'Hardware', slug: 'hardware', icon: 'cpu', section: 'config' },
   { name: 'HW Acceleration', slug: 'hwaccel', icon: 'chart-no-axes-combined', section: 'config' },
   { name: 'Users', slug: 'users', icon: 'user', section: 'config' },
+  { name: 'Settings', slug: 'integrations', icon: 'settings', section: 'config' },
   { name: 'Logs', slug: 'logs', icon: 'scroll-text', section: 'infra' },
   { name: 'API Docs', slug: 'apidocs', icon: 'message-circle-question-mark', section: 'infra' },
   { name: 'Caddy', slug: 'caddy', icon: 'shield', section: 'infra' },
