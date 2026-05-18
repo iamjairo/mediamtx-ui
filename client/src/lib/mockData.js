@@ -73,6 +73,8 @@ function jsonResponse(payload) {
 export function getMockResponse(url) {
   const u = url.startsWith('http') ? new URL(url) : new URL(url, window.location.origin);
   const path = u.pathname + (u.search || '');
+  if (path === '/settings' || path === '/mediamtx/config/global/get')
+    return jsonResponse({ hlsAddress: ':8888', webrtcAddress: ':8889', rtspAddress: ':8554' });
   if (path === '/mediamtx/paths/list')
     return jsonResponse({ pageCount: 1, itemCount: MOCK_PATHS.length, items: MOCK_PATHS });
   if (path === '/mediamtx/recordings/list')

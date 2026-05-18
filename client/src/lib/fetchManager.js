@@ -65,7 +65,10 @@ class FetchManager {
 
 export const fm = new FetchManager({
   onUnauthorized: () => {
-    // Send the user to the login page; preserves the vanilla behavior.
-    window.location.href = '/';
+    // No-op. The vanilla behavior redirected to '/', but in the React app '/'
+    // IS the dashboard — that just causes a reload loop when mock fallback
+    // doesn't cover a 401'd endpoint. Auth is handled separately via
+    // /auth/login; callers handle the thrown Unauthorized error themselves.
+    console.warn('[fm] 401 — caller will receive an Unauthorized error');
   },
 });
