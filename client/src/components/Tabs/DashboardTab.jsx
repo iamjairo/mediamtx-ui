@@ -20,8 +20,6 @@ const ENV_PRESETS = [
   { id: 'arrive', label: 'Arrive Home',     icon: 'home'  },
 ];
 
-const PROTOCOLS = ['WebRTC', 'HLS', 'LL-HLS', 'RTSP', 'RTMP', 'SRT', 'MPEG-TS', 'RTP'];
-
 const EFFECT_COLORS = ['iot-effect-amber', 'iot-effect-green', 'iot-effect-purple'];
 
 // ── Inline SVG icons (camelCased for JSX) ─────────────────────────────────────
@@ -79,12 +77,87 @@ const Icons = {
       <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
     </svg>
   ),
+  mic: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect width="6" height="11" x="9" y="2" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/>
+      <line x1="12" x2="12" y1="19" y2="22"/>
+    </svg>
+  ),
+  wifi: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M5 13a10 10 0 0 1 14 0"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M12 20h.01"/>
+      <path d="M2 8.82a15 15 0 0 1 20 0"/>
+    </svg>
+  ),
+  airplay: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/>
+      <polygon points="12 15 17 21 7 21 12 15"/>
+    </svg>
+  ),
+  snow: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M20 4v16"/><path d="m18 6 2-2 2 2"/><path d="m18 18 2 2 2-2"/>
+      <path d="M12 6V2"/><path d="M12 22v-4"/>
+      <path d="m6 12 16 0"/><path d="m4 14 2-2-2-2"/><path d="m18 10 2 2-2 2"/>
+    </svg>
+  ),
+  cloudy: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+    </svg>
+  ),
+  calendar: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M8 2v4"/><path d="M16 2v4"/>
+      <rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>
+    </svg>
+  ),
+  bell: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M10.268 21a2 2 0 0 0 3.464 0"/>
+      <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/>
+    </svg>
+  ),
+  play: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+  ),
+  pause: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+  ),
+  skipBack: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polygon points="19 20 9 12 19 4 19 20"/><line x1="5" x2="5" y1="19" y2="5"/>
+    </svg>
+  ),
+  skipFwd: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/>
+    </svg>
+  ),
+  shuffle: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M2 18h1.4a2 2 0 0 0 1.7-1l4.9-8a2 2 0 0 1 1.7-1H16"/>
+      <path d="M2 6h1.4a2 2 0 0 1 1.7 1l4.9 8a2 2 0 0 0 1.7 1H16"/>
+      <polyline points="18 3 22 7 18 11"/><polyline points="18 13 22 17 18 21"/>
+    </svg>
+  ),
+  download: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2">
+      <path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/>
+    </svg>
+  ),
+  upload: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2">
+      <path d="M12 3v14"/><path d="m6 9 6-6 6 6"/><path d="M5 21h14"/>
+    </svg>
+  ),
+  latency: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="2">
+      <path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+    </svg>
+  ),
 };
-
-// ── Helper: split camelCase ───────────────────────────────────────────────────
-function splitCamelCase(str) {
-  return str.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
-}
 
 // ── SVG Circular Dial ─────────────────────────────────────────────────────────
 function Dial({ value, max, label, unit, color, colorClass, size, ticks, arcFraction }) {
@@ -141,21 +214,87 @@ function Dial({ value, max, label, unit, color, colorClass, size, ticks, arcFrac
 }
 
 // ── IoT Card wrapper ──────────────────────────────────────────────────────────
-function IotCard({ title, badge, children, className }) {
+function IotCard({ title, badge, headerExtra, children, className }) {
   return (
     <div className={`iot-card${className ? ' ' + className : ''}`}>
       <div className="iot-card-header">
         <span className="iot-card-title">{title}</span>
         {badge && <span className="iot-card-badge">{badge}</span>}
+        {headerExtra}
       </div>
       {children}
     </div>
   );
 }
 
+// ── Greeting card (top-left) ─────────────────────────────────────────────────
+function GreetingCard({ activeRoomName }) {
+  const h = new Date().getHours();
+  const greeting = h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  return (
+    <div className="iot-greeting">
+      <div className="iot-greeting-avatar">
+        <div className="iot-greeting-avatar-ring"></div>
+        <div className="iot-greeting-avatar-img">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 21a8 8 0 0 1 16 0"/>
+          </svg>
+        </div>
+        <div className="iot-greeting-badge">4</div>
+      </div>
+      <div className="iot-greeting-text">
+        <span className="iot-greeting-eyebrow">{greeting.toUpperCase()}</span>
+        <h2 className="iot-greeting-name">Welcome back</h2>
+      </div>
+      <button className="iot-greeting-menu" aria-label="More">⋯</button>
+    </div>
+  );
+}
+
+// ── Active room hero (top-center) ────────────────────────────────────────────
+function ActiveRoomHero({ name, deviceCount, onAdd }) {
+  return (
+    <div className="iot-active-room">
+      <div className="iot-active-room-text">
+        <h2 className="iot-active-room-title">{name}<span className="iot-active-room-menu">⋯</span></h2>
+        <span className="iot-active-room-sub">{deviceCount} Devices running</span>
+      </div>
+      <button className="iot-add-device" onClick={onAdd}>
+        <span className="iot-add-device-plus">+</span>
+        <span>Add New Device</span>
+      </button>
+    </div>
+  );
+}
+
+// ── Compact weather + clock strip (top-right) ────────────────────────────────
+function HeaderInfoStrip() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+  const date = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+  return (
+    <div className="iot-header-strip">
+      <div className="iot-weather-pill">
+        <div className="iot-weather-pill-icon">{Icons.cloudy}</div>
+        <div className="iot-weather-pill-text">
+          <span className="iot-weather-pill-label">Cloudy</span>
+          <span className="iot-weather-pill-temp">21<sup>°C</sup></span>
+        </div>
+      </div>
+      <div className="iot-clock-pill">{time}</div>
+      <div className="iot-date-pill">{Icons.calendar}{' '}{date}</div>
+    </div>
+  );
+}
+
 // ── Rooms panel ───────────────────────────────────────────────────────────────
-function RoomsPanel() {
-  const [active, setActive] = useState('workstation');
+function RoomsPanel({ active, setActive }) {
   return (
     <IotCard title="My Rooms">
       <div className="iot-rooms-grid">
@@ -193,6 +332,124 @@ function EnvironmentPanel() {
             <span className="iot-env-label">{preset.label}</span>
           </button>
         ))}
+      </div>
+    </IotCard>
+  );
+}
+
+// ── Voice assistance panel ───────────────────────────────────────────────────
+function VoiceAssistancePanel() {
+  // Pre-computed waveform bars seeded by index — stable across renders, no Math.random.
+  const bars = Array.from({ length: 48 }, (_, i) => {
+    const s = Math.sin(i * 0.6) * Math.cos(i * 0.3);
+    return 6 + Math.abs(s) * 22;
+  });
+  return (
+    <IotCard title="Voice Assistance">
+      <div className="iot-voice-row">
+        <button className="iot-voice-mic" aria-label="Listening">
+          <span className="iot-voice-mic-ring"></span>
+          {Icons.mic}
+        </button>
+        <div className="iot-voice-text">
+          <div className="iot-voice-cmd">
+            <span className="iot-voice-cmd-prefix">Hey Google,</span>{' '}
+            <span>turn off my </span><strong>bedroom's lamp</strong>
+          </div>
+        </div>
+      </div>
+      <div className="iot-voice-wave">
+        {bars.map((h, i) => (
+          <div key={i} className="iot-voice-wave-bar" style={{ height: `${h}px`, animationDelay: `${i * 0.06}s` }}></div>
+        ))}
+      </div>
+    </IotCard>
+  );
+}
+
+// ── Accessories grid (top-center inside main area) ────────────────────────────
+function AccessoriesGrid({ streams, navigate }) {
+  const accessories = [
+    {
+      id: 'wifi', name: 'Nest Wi-Fi', status: 'Running',
+      icon: <div className="iot-accessory-icon-img green">{Icons.wifi}</div>,
+      onClick: () => {},
+    },
+    {
+      id: 'cctv', name: 'CCTV', status: streams.length > 0 ? `${streams.length} live` : 'Idle',
+      icon: <div className="iot-accessory-icon-img blue">{Icons.airplay}</div>,
+      onClick: () => navigate('/camerawall'),
+    },
+    {
+      id: 'ac', name: 'AC', status: 'Turned off',
+      icon: <div className="iot-accessory-icon-img slate">{Icons.snow}</div>,
+      onClick: () => {},
+    },
+  ];
+
+  return (
+    <IotCard title="Accessories">
+      <div className="iot-accessories-grid">
+        {accessories.map((a) => (
+          <button key={a.id} className="iot-accessory-card" onClick={a.onClick}>
+            <div className="iot-accessory-top">
+              {a.icon}
+              <button className="iot-accessory-menu" aria-label="More">⋯</button>
+            </div>
+            <div className="iot-accessory-info">
+              <div className="iot-accessory-name">{a.name}</div>
+              <div className="iot-accessory-status">{a.status}</div>
+            </div>
+            <span className="iot-accessory-arrow">›</span>
+          </button>
+        ))}
+      </div>
+    </IotCard>
+  );
+}
+
+// ── Music player ─────────────────────────────────────────────────────────────
+function MusicPlayer() {
+  const [playing, setPlaying] = useState(true);
+  const [pos, setPos] = useState(152); // 2:32 in seconds
+  const total = 384; // 6:24
+
+  useEffect(() => {
+    if (!playing) return;
+    const id = setInterval(() => {
+      setPos((p) => (p + 1) % total);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [playing]);
+
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const pct = (pos / total) * 100;
+
+  return (
+    <IotCard title="Now Playing" className="iot-music-card">
+      <div className="iot-music-art">
+        <div className="iot-music-art-overlay"></div>
+        <div className="iot-music-art-tag">
+          <div className="iot-music-art-tag-icon">{Icons.music}</div>
+        </div>
+        <div className="iot-music-art-text">
+          <div className="iot-music-art-title">Rainy day (relaxing sound)</div>
+          <div className="iot-music-art-sub">Currently playing</div>
+        </div>
+      </div>
+      <div className="iot-music-progress">
+        <span className="iot-music-time">{fmt(pos)}</span>
+        <div className="iot-music-bar"><div className="iot-music-bar-fill" style={{ width: `${pct}%` }}></div></div>
+        <span className="iot-music-time muted">{fmt(total - pos)}</span>
+      </div>
+      <div className="iot-music-ctrls">
+        <button className="iot-music-btn small" aria-label="Shuffle">{Icons.shuffle}</button>
+        <button className="iot-music-btn" aria-label="Previous">{Icons.skipBack}</button>
+        <button className="iot-music-btn play" onClick={() => setPlaying((v) => !v)} aria-label={playing ? 'Pause' : 'Play'}>
+          {playing ? Icons.pause : Icons.play}
+        </button>
+        <button className="iot-music-btn" aria-label="Next">{Icons.skipFwd}</button>
+        <button className="iot-music-btn small" aria-label="Repeat">↻</button>
       </div>
     </IotCard>
   );
@@ -348,7 +605,7 @@ function WeatherPanel() {
 // ── A/C panel ─────────────────────────────────────────────────────────────────
 function ACPanel() {
   return (
-    <IotCard title="Air Conditioner">
+    <IotCard title="Air Conditioner" headerExtra={<span className="iot-card-warn">⚠ 2 report ▾</span>}>
       <div className="iot-ac-content">
         <Dial
           value={15} max={30} label="Temperature" unit="°C"
@@ -376,7 +633,7 @@ function LEDPanel() {
   const [activeEffect, setActiveEffect] = useState(2);
 
   return (
-    <IotCard title="LED Strips Light">
+    <IotCard title="LED Strips Light" headerExtra={<span className="iot-card-cog">⚙</span>}>
       <div className="iot-led-content">
         <div style={{ position: 'relative' }}>
           <Dial
@@ -402,143 +659,93 @@ function LEDPanel() {
   );
 }
 
-// ── Connectivity panel ────────────────────────────────────────────────────────
-function ConnectivityPanel({ streams, caddyStatus, dockerContainers, navigate }) {
-  const servers = [
-    { name: 'MediaMTX', detail: 'localhost',                         online: true                           },
-    { name: 'Go2RTC',   detail: 'RTSP / WebRTC relay',              online: false                          },
-    { name: 'Caddy',    detail: caddyStatus?.version ? `v${caddyStatus.version}` : 'Reverse proxy', online: caddyStatus?.running === true },
-    { name: 'Docker',   detail: `${dockerContainers.length} container(s)`,                          online: dockerContainers.length > 0  },
-  ];
-
+// ── Router/Server stats panel (top-right) ────────────────────────────────────
+function RouterStatsPanel({ streams, caddyStatus, dockerContainers }) {
+  // Live stats from the MediaMTX backend dressed in router clothing.
+  // When the backend is unreachable, the mock data shines through.
+  const dl = streams.length ? (153.65 - streams.length * 0.4).toFixed(2) : '153.65';
+  const ul = streams.length ? (198.55 - streams.length * 0.6).toFixed(2) : '198.55';
+  const lat = caddyStatus?.running ? '9' : '12';
   return (
-    <div className="dash-panel dash-connectivity">
-      <div className="dash-panel-header">
-        <h3>Server Connectivity</h3>
-        <span className="dash-panel-link" onClick={() => navigate('/server')} style={{ cursor: 'pointer' }}>
-          Configure →
-        </span>
+    <IotCard
+      title="Network"
+      headerExtra={<span className="iot-card-menu">⋯</span>}
+    >
+      <div className="iot-router-grid">
+        <div className="iot-router-stat">
+          <div className="iot-router-stat-value green">{dl}<span className="muted"> Mbps</span></div>
+          <div className="iot-router-stat-label">{Icons.download}{' '}Download</div>
+        </div>
+        <div className="iot-router-stat">
+          <div className="iot-router-stat-value blue">{ul}<span className="muted"> Mbps</span></div>
+          <div className="iot-router-stat-label">{Icons.upload}{' '}Upload</div>
+        </div>
+        <div className="iot-router-stat">
+          <div className="iot-router-stat-value amber">{lat}<span className="muted">ms</span></div>
+          <div className="iot-router-stat-label">{Icons.latency}{' '}Idle Latency</div>
+        </div>
       </div>
-      <div className="dash-server-list">
-        {servers.map((s) => (
-          <div className="dash-server-row" key={s.name}>
-            <div className="dash-server-info">
-              <div className="dash-server-name">{s.name}</div>
-              <div className="dash-server-detail">{s.detail}</div>
-            </div>
-            <div className="dash-server-status">
-              <span className={`status-dot ${s.online ? 'online' : 'offline'}`}></span>
-              <span>{s.online ? 'Online' : 'Offline'}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-      <button className="dash-add-server" onClick={() => navigate('/server')}>
-        <span>+</span><span>Add Server Connection</span>
-      </button>
-    </div>
+    </IotCard>
   );
 }
 
-// ── Event log panel ───────────────────────────────────────────────────────────
-function EventLogPanel() {
-  const [events, setEvents] = useState([{ time: new Date().toLocaleTimeString('en-US', { hour12: false }), msg: 'Dashboard initialized — system online' }]);
-
-  function clear() { setEvents([]); }
+// ── Electricity / bandwidth chart ────────────────────────────────────────────
+function BandwidthChart() {
+  // Stable seeded curve — same look across renders.
+  const points = Array.from({ length: 24 }, (_, i) => {
+    const x = i / 23;
+    const y = 50 + Math.sin(i * 0.55) * 20 + Math.cos(i * 0.3) * 12 + (i > 14 ? 8 : 0);
+    return [x * 100, 100 - y];
+  });
+  const pathD = points.reduce((acc, [x, y], i) => {
+    if (i === 0) return `M ${x} ${y}`;
+    const [px, py] = points[i - 1];
+    const cx1 = px + (x - px) / 2;
+    const cx2 = px + (x - px) / 2;
+    return `${acc} C ${cx1} ${py}, ${cx2} ${y}, ${x} ${y}`;
+  }, '');
+  const areaD = `${pathD} L 100 100 L 0 100 Z`;
 
   return (
-    <div className="dash-panel dash-events">
-      <div className="dash-panel-header">
-        <h3>Event Log</h3>
-        <span className="dash-live-badge">LIVE</span>
+    <IotCard
+      title="Bandwidth"
+      headerExtra={<span className="iot-card-pill">{Icons.calendar}{' '}Past 6 hours ▾</span>}
+    >
+      <div className="iot-chart-wrap">
+        <div className="iot-chart-axis-y">
+          {['100%', '75%', '50%', '25%', '0%'].map((v) => <span key={v}>{v}</span>)}
+        </div>
+        <svg className="iot-chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.4"/>
+              <stop offset="100%" stopColor="#22d3ee" stopOpacity="0"/>
+            </linearGradient>
+          </defs>
+          {[20, 40, 60, 80].map((y) => (
+            <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="rgba(148,163,184,0.08)" strokeWidth="0.2"/>
+          ))}
+          <path d={areaD} fill="url(#chartFill)"/>
+          <path d={pathD} fill="none" stroke="#22d3ee" strokeWidth="0.6" vectorEffect="non-scaling-stroke"/>
+          {points.filter((_, i) => i % 4 === 0).map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r="0.6" fill="#22d3ee"/>
+          ))}
+        </svg>
       </div>
-      <div className="dash-event-list">
-        {events.length === 0 ? (
-          <div className="dash-event-empty">
-            <div className="dash-event-empty-icon">📋</div>
-            <span>No events yet</span>
-          </div>
-        ) : events.map((ev, i) => (
-          <div className="dash-event-item" key={i}>
-            <span className="dash-event-time">{ev.time}</span>
-            <span className="dash-event-msg">{ev.msg}</span>
-          </div>
-        ))}
+      <div className="iot-chart-axis-x">
+        {['-6h', '-5h', '-4h', '-3h', '-2h', '-1h', 'now'].map((t) => <span key={t}>{t}</span>)}
       </div>
-      <div className="dash-event-footer">
-        <span>{events.length} events</span>
-        <button onClick={clear}>Clear log</button>
-      </div>
-    </div>
+    </IotCard>
   );
 }
 
-// ── Stream overview panel ─────────────────────────────────────────────────────
-function StreamOverviewPanel({ streams, navigate }) {
-  const shown = streams.slice(0, 4);
-
-  return (
-    <div className="dash-stream-overview">
-      <div className="dash-panel-header">
-        <h3>CCTV Monitor</h3>
-        <span className="dash-panel-link" onClick={() => navigate('/camerawall')} style={{ cursor: 'pointer' }}>
-          Camera Wall →
-        </span>
-      </div>
-      <div className="dash-stream-preview">
-        {shown.length === 0 ? (
-          <div className="dash-stream-empty">
-            <div className="dash-stream-empty-icon">📺</div>
-            <p>No streams configured yet</p>
-            <button onClick={() => navigate('/streams')}>Add a Stream</button>
-          </div>
-        ) : (
-          <div className="dash-stream-mini-grid">
-            {shown.map((stream, i) => {
-              const name = stream.name || stream.confName || '—';
-              const sourceType = stream.source?.type || '';
-              const protoText = sourceType ? splitCamelCase(sourceType).toUpperCase().split(' ')[0] : 'RTSP';
-              return (
-                <div className="dash-stream-mini-card" key={i} onClick={() => navigate('/camerawall')} style={{ cursor: 'pointer' }}>
-                  <div className="dash-stream-thumb">
-                    <div className="dash-stream-thumb-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <rect x="2" y="6" width="15" height="12" rx="2"/>
-                        <path d="M17 10l4-2.5v9L17 14"/>
-                      </svg>
-                    </div>
-                    <div className="dash-stream-thumb-status">LIVE</div>
-                    <div className="dash-stream-thumb-proto">{protoText}</div>
-                  </div>
-                  <div className="dash-stream-mini-footer">
-                    <div className="dash-stream-mini-dot"></div>
-                    <div className="dash-stream-mini-name" title={name}>{name}</div>
-                  </div>
-                </div>
-              );
-            })}
-            {streams.length > 4 && (
-              <div
-                className="dash-stream-mini-card"
-                style={{ justifyContent: 'center', color: 'var(--text-muted-color)', fontSize: 'var(--fs-xs)', cursor: 'pointer' }}
-                onClick={() => navigate('/streams')}
-              >
-                +{streams.length - 4} more
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ── Main component ─────────────────────────────────────────────────────────────
+// ── Main component ────────────────────────────────────────────────────────────
 export default function DashboardTab() {
   const navigate = useNavigate();
   const [streams, setStreams] = useState([]);
   const [caddyStatus, setCaddyStatus] = useState(null);
   const [dockerContainers, setDockerContainers] = useState([]);
+  const [activeRoom, setActiveRoom] = useState('workstation');
 
   async function loadData() {
     try {
@@ -569,101 +776,45 @@ export default function DashboardTab() {
     return () => clearInterval(id);
   }, []);
 
-  // Derived stat values
-  function serverCount() {
-    let n = 1;
-    if (caddyStatus?.running) n++;
-    if (dockerContainers.length > 0) n++;
-    return n;
-  }
-
-  const statCards = [
-    { icon: '📡', value: String(streams.length),              label: 'Active Streams', sub: 'paths configured' },
-    { icon: '🖥️', value: String(serverCount()),              label: 'Servers',         sub: 'connected'        },
-    { icon: '🎥', value: streams.length > 0 ? 'Active' : 'Idle', label: 'Camera Wall', sub: 'viewer'          },
-    { icon: '💚', value: 'Nominal',                           label: 'System Health',  sub: 'status'           },
-  ];
+  const activeRoomName = ROOMS.find((r) => r.id === activeRoom)?.name || 'Dashboard';
+  const deviceCount = 12; // would aggregate accessories + streams in a real integration
 
   return (
-    <div className="tab dashboard">
-      {/* Welcome banner */}
-      <div className="dash-welcome">
-        <div className="dash-status-banner">SYSTEM ONLINE</div>
-        <h2>Welcome back</h2>
-        <p>MediaMTX Dashboard — Stream Management Hub</p>
-      </div>
-
-      {/* Stat cards row */}
-      <div className="dash-stats-row">
-        {statCards.map((card) => (
-          <div className="dash-stat-card" key={card.label}>
-            <div className="dash-stat-icon">{card.icon}</div>
-            <div className="dash-stat-value">{card.value}</div>
-            <div className="dash-stat-label">{card.label}</div>
-            <div className="dash-stat-sub">{card.sub}</div>
-          </div>
-        ))}
+    <div className="tab dashboard iot-dashboard">
+      {/* Top strip — greeting | active room | weather+clock */}
+      <div className="iot-top-strip">
+        <GreetingCard />
+        <ActiveRoomHero name={activeRoomName} deviceCount={deviceCount} onAdd={() => navigate('/streams')} />
+        <HeaderInfoStrip />
       </div>
 
       {/* 3-column IoT layout */}
       <div className="dash-iot-layout">
         {/* Left column */}
         <div className="dash-iot-left">
-          <RoomsPanel />
+          <RoomsPanel active={activeRoom} setActive={setActiveRoom} />
           <EnvironmentPanel />
-          <WeatherPanel />
+          <VoiceAssistancePanel />
         </div>
 
         {/* Center column */}
         <div className="dash-iot-center">
-          <div className="dash-grid">
-            <ConnectivityPanel
-              streams={streams}
-              caddyStatus={caddyStatus}
-              dockerContainers={dockerContainers}
-              navigate={navigate}
-            />
-            <EventLogPanel />
-          </div>
-
-          <StreamOverviewPanel streams={streams} navigate={navigate} />
-
-          {/* Metrics */}
-          <div className="dash-metrics-row">
-            {[
-              { label: 'CPU USAGE',    icon: '🖥',  value: '—', fillPct: 0 },
-              { label: 'STORAGE USED', icon: '💾', value: '—', fillPct: 0 },
-              { label: 'BANDWIDTH',    icon: '📶', value: '—', fillPct: 0 },
-            ].map((m) => (
-              <div className="dash-metric-card" key={m.label}>
-                <div className="dash-metric-header">
-                  <span className="dash-metric-label">{m.label}</span>
-                  <span className="dash-metric-icon">{m.icon}</span>
-                </div>
-                <div className="dash-metric-value">{m.value}</div>
-                <div className="dash-metric-bar">
-                  <div className="dash-metric-fill" style={{ width: `${m.fillPct}%` }}></div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Protocols */}
-          <div className="dash-protocols">
-            <h4>Supported Protocols</h4>
-            <div className="dash-protocol-list">
-              {PROTOCOLS.map((proto) => (
-                <span className="dash-protocol-badge" data-proto={proto} key={proto}>{proto}</span>
-              ))}
-            </div>
-          </div>
+          <AccessoriesGrid streams={streams} navigate={navigate} />
+          <MusicPlayer />
+          <ACPanel />
         </div>
 
         {/* Right column */}
         <div className="dash-iot-right">
-          <ACPanel />
+          <RouterStatsPanel streams={streams} caddyStatus={caddyStatus} dockerContainers={dockerContainers} />
           <LEDPanel />
+          <BandwidthChart />
         </div>
+      </div>
+
+      {/* Animated weather — moved to bottom full-width row */}
+      <div className="iot-weather-row">
+        <WeatherPanel />
       </div>
     </div>
   );
