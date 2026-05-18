@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const REPO_URL = 'https://github.com/iamjairo/Home-Assistant-Dashboard';
 const DEFAULT_PORT = 5173;
+const DEFAULT_URL = 'https://home.assistant.iamjairo.com';
 
 const STATUS_LABELS = {
   connected: '● Reachable',
@@ -32,8 +33,8 @@ function normalizeUrl(value, defaultScheme = 'http') {
 }
 
 export default function HomeAssistantTab() {
-  const [url, setUrl] = useState(() => localStorage.getItem('homeassistant:url') || '');
-  const [inputValue, setInputValue] = useState(() => localStorage.getItem('homeassistant:url') || '');
+  const [url, setUrl] = useState(() => localStorage.getItem('homeassistant:url') || DEFAULT_URL);
+  const [inputValue, setInputValue] = useState(() => localStorage.getItem('homeassistant:url') || DEFAULT_URL);
   const [status, setStatus] = useState('unknown');
   // Increment to force iframe remount on reload
   const [embedKey, setEmbedKey] = useState(0);
@@ -114,7 +115,7 @@ export default function HomeAssistantTab() {
         <input
           type="text"
           className="ha-url-input"
-          placeholder={`http://localhost:${DEFAULT_PORT}`}
+          placeholder={DEFAULT_URL}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}

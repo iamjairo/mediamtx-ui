@@ -15,14 +15,14 @@ const FIELDS = [
     section: 'Home Assistant',
     description: 'Tunet Dashboard URL — embedded in the HA tab.',
     items: [
-      { key: 'homeassistant:url', label: 'Dashboard URL', placeholder: 'http://localhost:5173', type: 'url' },
+      { key: 'homeassistant:url', label: 'Dashboard URL', placeholder: 'https://home.assistant.iamjairo.com', type: 'url' },
     ],
   },
   {
     section: 'Scrypted',
     description: 'Console URL — embedded in the Scrypted tab.',
     items: [
-      { key: 'scrypted:url', label: 'Scrypted URL', placeholder: 'https://192.168.1.50:10443', type: 'url' },
+      { key: 'scrypted:url', label: 'Scrypted URL', placeholder: 'https://scrypted.selfhosting.iamjairo.com', type: 'url' },
     ],
   },
   {
