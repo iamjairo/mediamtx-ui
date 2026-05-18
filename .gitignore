@@ -3,8 +3,9 @@ node_modules
 data/**/*
 .env
 mediamtx.yml
-server/public/js/Settings/**/*
 /script
+client/dist/**/*
+client/.vite/**/*
 /config/backup/**/*
 /config/auth.json
 server/build/**/*
