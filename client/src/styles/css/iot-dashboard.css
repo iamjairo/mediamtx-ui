@@ -27,6 +27,46 @@
   gap: 16px;
 }
 .iot-dashboard .iot-weather-row { margin-top: 16px; }
+
+/* ── Column balance: stretch left + right cards to match middle col height ── */
+.iot-dashboard .dash-iot-left .iot-card,
+.iot-dashboard .dash-iot-right .iot-card {
+  display: flex;
+  flex-direction: column;
+}
+.iot-dashboard .dash-iot-left .iot-rooms-grid,
+.iot-dashboard .dash-iot-left .iot-env-grid {
+  flex: 1;
+}
+.iot-dashboard .dash-iot-right > .iot-card.iot-weather {
+  flex: 1.6;
+}
+
+/* Beefier room tiles so My Rooms fills its column */
+.iot-dashboard .iot-rooms-grid { gap: 12px; padding: 4px 0; }
+.iot-dashboard .iot-rooms-grid .iot-room-btn,
+.iot-dashboard .iot-rooms-grid .iot-room-add {
+  min-height: 84px;
+  padding: 14px;
+  border-radius: 14px;
+}
+
+/* Bigger environment tiles, 2-col grid for breathing room */
+.iot-dashboard .iot-env-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 6px 0 2px;
+  flex: 1;
+}
+.iot-dashboard .iot-env-grid .iot-env-btn {
+  min-height: 80px;
+  padding: 14px;
+  border-radius: 14px;
+}
+
+/* Voice card — give the waveform more presence */
+.iot-dashboard .iot-voice-row { padding: 8px 2px 12px; }
+.iot-dashboard .iot-voice-wave { height: 52px; }
 @media (max-width: 1280px) {
   .iot-dashboard .iot-top-strip { grid-template-columns: 1fr 1fr; }
   .iot-dashboard .iot-top-strip > *:nth-child(3) { grid-column: 1 / -1; }
@@ -531,4 +571,193 @@
   opacity: .35;
   letter-spacing: .12em;
   text-transform: uppercase;
+}
+
+/* ── Weather visual — bigger centered cloud with sun glow behind ─────────── */
+.iot-dashboard .iot-weather .weather-main {
+  gap: 24px;
+  padding: 4px 0 14px;
+}
+.iot-dashboard .iot-weather .weather-cloud-wrap {
+  width: 170px;
+  height: 150px;
+  flex: 0 0 170px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.iot-dashboard .iot-weather .weather-cloud-wrap::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 18px;
+  width: 78px;
+  height: 78px;
+  background: radial-gradient(circle, rgba(251, 191, 36, .95) 0%, rgba(251, 191, 36, .45) 35%, rgba(251, 191, 36, 0) 70%);
+  border-radius: 50%;
+  animation: iotSunPulse 5s ease-in-out infinite;
+  z-index: 0;
+}
+@keyframes iotSunPulse {
+  0%, 100% { transform: scale(1); opacity: .8; }
+  50%      { transform: scale(1.08); opacity: 1; }
+}
+.iot-dashboard .iot-weather .weather-cloud-wrap svg.cloud-icon {
+  width: 150px;
+  height: 150px;
+  position: relative;
+  z-index: 1;
+  color: #cbd5e1;
+}
+.iot-dashboard .iot-weather .weather-lightning {
+  bottom: 22px;
+  z-index: 2;
+}
+.iot-dashboard .iot-weather .weather-lightning svg {
+  width: 44px;
+  height: 44px;
+}
+.iot-dashboard .iot-weather .weather-rain {
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 4px;
+  justify-content: center;
+  width: 70px;
+  z-index: 2;
+}
+.iot-dashboard .iot-weather .weather-temp-value {
+  font-size: 3.6rem;
+}
+
+/* ── Settings tab ─────────────────────────────────────────────────────────── */
+.settings-tab .settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.settings-tab .settings-header h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: var(--text-color, #e2e8f0);
+}
+.settings-tab .settings-header p {
+  margin: 0;
+  color: var(--text-muted-color, #94a3b8);
+  font-size: 13px;
+  max-width: 540px;
+}
+.settings-tab .settings-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.settings-tab .settings-saved-pill {
+  font-size: 11px;
+  color: #4ade80;
+  background: rgba(74, 222, 128, .12);
+  border: 1px solid rgba(74, 222, 128, .3);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+.settings-tab .settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+.settings-tab .settings-card {
+  background: var(--card-bg-color, rgba(30, 41, 59, .8));
+  border: 1px solid var(--card-border-color, rgba(148, 163, 184, .1));
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.settings-tab .settings-card:hover {
+  border-color: rgba(34, 211, 238, .25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, .3);
+}
+.settings-tab .settings-card-head h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: var(--text-color, #e2e8f0);
+}
+.settings-tab .settings-card-head p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted-color, #94a3b8);
+  line-height: 1.4;
+}
+.settings-tab .settings-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.settings-tab .settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.settings-tab .settings-field-label {
+  font-size: 11px;
+  color: var(--text-muted-color, #94a3b8);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.settings-tab .settings-field-input {
+  background: rgba(15, 23, 42, .6);
+  border: 1px solid rgba(148, 163, 184, .15);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text-color, #e2e8f0);
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color .15s ease;
+}
+.settings-tab .settings-field-input:focus {
+  outline: none;
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, .15);
+}
+.settings-tab .settings-admin-card .settings-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.settings-tab .settings-admin-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: rgba(15, 23, 42, .55);
+  border: 1px solid rgba(148, 163, 184, .12);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .15s ease, background .15s ease;
+}
+.settings-tab .settings-admin-link:hover {
+  border-color: rgba(34, 211, 238, .35);
+  background: rgba(15, 23, 42, .8);
+}
+.settings-tab .settings-admin-link-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-color, #e2e8f0);
+}
+.settings-tab .settings-admin-link-desc {
+  font-size: 11px;
+  color: var(--text-muted-color, #94a3b8);
+  margin-top: 2px;
+}
+.settings-tab .settings-admin-link-arrow {
+  color: var(--text-muted-color, #94a3b8);
+  font-size: 18px;
 }
