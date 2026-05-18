@@ -1,99 +1,398 @@
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+.overview-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-s) 0;
+    margin-bottom: var(--space-s);
+}
+
+.overview-layout-group {
+    display: flex;
+    gap: 2px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-s);
+    padding: 2px;
+}
+
+.overview-layout-btn {
+    padding: 4px 12px;
+    background: none;
+    border: none;
+    border-radius: var(--radius-s);
+    color: var(--text-muted-color);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.overview-layout-btn.active,
+.overview-layout-btn:hover {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.overview-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+}
+
+.overview-stream-count {
+    font-size: var(--fs-xs);
+    color: var(--text-muted-color);
+}
+
+.overview-fullscreen-all {
+    background: none;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-s);
+    color: var(--text-muted-color);
+    font-size: 1rem;
+    line-height: 1;
+    padding: 3px 7px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.overview-fullscreen-all:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* ── Layout variants via data-layout on .streams ─────────────────────────── */
+.streams[data-layout="2x1"],
+.streams[data-layout="2x2"] {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.streams[data-layout="3x2"],
+.streams[data-layout="3x3"] {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* ── Fullscreen modal ────────────────────────────────────────────────────── */
+.overview-fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overview-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.overview-modal-content {
+    position: relative;
+    width: 90vw;
+    max-width: 1200px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.overview-modal-video-wrap {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+}
+
+.overview-modal-video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.overview-modal-info {
+    padding: var(--space-l);
+}
+
+.overview-modal-info h3 {
+    font-size: var(--fs-l);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 var(--space-m) 0;
+}
+
+.overview-modal-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-s);
+}
+
+.overview-modal-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid var(--card-border);
+    font-size: var(--fs-s);
+}
+
+.overview-modal-row .label {
+    color: var(--text-muted-color);
+}
+
+.overview-modal-row .value {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.overview-modal-close {
+    position: absolute;
+    top: var(--space-m);
+    right: var(--space-m);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    z-index: 1;
+    transition: background 0.2s;
+}
+
+.overview-modal-close:hover {
+    background: rgba(239, 68, 68, 0.8);
+}
+
+/* ── Tab root ────────────────────────────────────────────────────────────── */
 .tab.overview {
-    width: initial;
-    margin: 110px 30px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
 
     .streams {
         display: grid;
-        grid-auto-columns: 1fr;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-xxl);
-        grid-auto-flow: row;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2px;
 
         .stream-item {
             display: block;
-            padding: var(--space-xl);
-            background-color: var(--shift-005);
-            border: 1px solid var(--light-border-color);
-            border-radius: 10px;
+            padding: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-s);
             position: relative;
-            min-height: 120px;
+            overflow: hidden;
+            transition: all var(--transition-normal);
+            cursor: pointer;
 
-            .stream-name {
-                font-size: 25px;
+            &:hover {
+                box-shadow: inset 0 0 0 2px rgba(6, 182, 212, 0.5);
+                z-index: 1;
             }
 
+            /* Expand icon shown on hover */
+            &::after {
+                content: '⛶';
+                position: absolute;
+                bottom: 8px;
+                right: 8px;
+                font-size: 0.85rem;
+                color: rgba(255, 255, 255, 0.7);
+                z-index: 4;
+                opacity: 0;
+                transition: opacity 0.2s;
+                pointer-events: none;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+            }
+
+            &:hover::after {
+                opacity: 1;
+            }
+
+            /* Protocol accent — thin top bar */
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                z-index: 2;
+                background: var(--accent-success);
+            }
+            &.protocol-rtsp::before { background: #06b6d4; }
+            &.protocol-hls::before { background: #a855f7; }
+            &.protocol-webrtc::before { background: #22c55e; }
+            &.protocol-rtmp::before { background: #f97316; }
+            &.protocol-srt::before { background: #3b82f6; }
+
+            video {
+                margin: 0;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16 / 9;
+                background-color: var(--page-bg);
+                display: block;
+                object-fit: cover;
+            }
+
+            /* Top-left overlay: status + name */
+            .stream-overlay-top {
+                position: absolute;
+                top: 6px;
+                left: 8px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                z-index: 3;
+                pointer-events: none;
+            }
+
+            .stream-status-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: #22c55e;
+                flex-shrink: 0;
+                box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+            }
+
+            .stream-name {
+                font-size: 0.7rem;
+                font-weight: 500;
+                color: rgba(255, 255, 255, 0.9);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 180px;
+            }
+
+            /* Top-right overlay: protocol badge */
             .stream-type {
-                font-size: 10px;
+                position: absolute;
+                top: 6px;
+                right: 8px;
+                z-index: 3;
+                display: inline-flex;
+                align-items: center;
+                font-size: 0.55rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-weight: 700;
+                padding: 2px 6px;
+                border-radius: 3px;
+                line-height: 1.4;
+                pointer-events: none;
+                color: #fff;
+                background: rgba(6, 182, 212, 0.7);
+
+                &.protocol-rtsp {
+                    background: rgba(6, 182, 212, 0.7);
+                }
+                &.protocol-hls {
+                    background: rgba(168, 85, 247, 0.7);
+                }
+                &.protocol-webrtc {
+                    background: rgba(34, 197, 94, 0.7);
+                }
+                &.protocol-rtmp {
+                    background: rgba(249, 115, 22, 0.7);
+                }
+                &.protocol-srt {
+                    background: rgba(59, 130, 246, 0.7);
+                }
+            }
+
+            /* Bottom overlay: viewers + bytes (shown on hover) */
+            .stream-overlay-bottom {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 10px;
+                background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+                z-index: 3;
             }
 
             .stream-viewers {
-                position: absolute;
-                right: 20px;
-                top: var(--space-xl);
-                padding: 0 0 17px 0;
-                border-radius: 5px;
-                font-size: 10px;
-                overflow: hidden;
-                text-transform: uppercase;
+                display: flex;
+                align-items: center;
+                gap: 3px;
+                font-size: 0.6rem;
+                color: rgba(255, 255, 255, 0.8);
+                pointer-events: none;
 
+                .stream-viewers-icon {
+                    display: flex;
+                    align-items: center;
+                    opacity: 0.7;
+                    svg {
+                        width: 11px;
+                        height: 11px;
+                    }
+                }
 
                 .stream-viewers-number {
-                    display: inline;
-                    padding: 30px;
-                    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-                    font-size: 25px;
-                    vertical-align: middle;
+                    font-size: 0.65rem;
+                    font-weight: 700;
+                    color: #22c55e;
+                    line-height: 1;
                 }
-            }
 
-            .stream-label {
-                display: inline-block;
-                position: absolute;
-                bottom: 5px;
-                width: 100%;
-                text-align: center;
-                left: 0;
+                .stream-label {
+                    display: none;
+                }
             }
 
             .stream-bytes {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
+                display: flex;
                 gap: 10px;
-                font-size: 10px;
+                font-size: 0.55rem;
                 text-transform: uppercase;
-                background-color: var(--light-med-bg);
-                padding: 10px;
-                border-bottom-left-radius: 10px;
-                border-bottom-right-radius: 10px;
+                letter-spacing: 0.03em;
+                color: rgba(255, 255, 255, 0.6);
+                pointer-events: none;
 
                 .stream-label {
-                    position: relative;
-                    width: initial;
-                    text-align: left;
-                    bottom: initial;
-                    display: inline-block;
-                    margin-right: 5px;
+                    display: none;
                 }
 
-                .stream-bytes-sent-number {
-                    font-weight: bold;
-                    display: inline-block;
-                }
-
+                .stream-bytes-sent-number,
                 .stream-bytes-received-number {
-                    font-weight: bold;
-                    display: inline-block;
+                    font-weight: 600;
+                    color: rgba(255, 255, 255, 0.7);
+                    font-variant-numeric: tabular-nums;
+                    font-size: 0.55rem;
+                }
+
+                .stream-bytes-received::before {
+                    content: '↓ ';
+                    color: #22c55e;
+                }
+                .stream-bytes-sent::before {
+                    content: '↑ ';
+                    color: #06b6d4;
                 }
             }
 
-
-            video {
-                margin-top: 10px;
-                position: relative;
-                width: 100%;
-                height: initial;
-                background-color: var(--light-bg);
-                display: block;
+            /* Hide old header structure */
+            .stream-header {
+                display: none;
             }
         }
     }

@@ -1,0 +1,100 @@
+.top-header {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    height: var(--header-height);
+    background: var(--header-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--light-border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-xl);
+    z-index: 50;
+    transition: left var(--transition-normal);
+}
+
+.top-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-l);
+}
+
+.top-header .header-left .page-title {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    color: var(--text-color);
+    letter-spacing: -0.02em;
+}
+
+.top-header .header-left .page-subtitle {
+    font-size: var(--fs-s);
+    color: var(--text-muted-color);
+}
+
+.top-header .header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-l);
+}
+
+.top-header .header-right .header-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-xs) var(--space-m);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    font-size: var(--fs-s);
+    color: var(--text-light-color);
+}
+
+.top-header .header-right .header-stat .stat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent-green);
+}
+
+.top-header .header-right .header-stat .stat-value {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.top-header .header-right .clock {
+    font-size: var(--fs);
+    font-weight: 500;
+    color: var(--text-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.top-header .header-right .clock .clock-date {
+    font-size: var(--fs-xs);
+    color: var(--text-muted-color);
+    margin-left: var(--space-s);
+}
+
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    color: var(--text-muted-color);
+    cursor: pointer;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.theme-toggle:hover {
+    color: var(--accent-primary, var(--color-primary));
+    border-color: var(--accent-primary, var(--color-primary));
+}
+
+.theme-toggle svg {
+    width: 18px;
+    height: 18px;
+}

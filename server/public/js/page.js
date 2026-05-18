@@ -53,15 +53,37 @@ export default class Page {
         !this.tabNavigation ? this.tabNavigation = new TabNavigation(this) : null;
 
         this.settings = new Settings(this);
-        await this.settings.load();
+        try {
+            await this.settings.load();
+        } catch (e) {
+            console.error(e);
+            this.toast.error('MediaMTX server is not reachable. Settings could not be loaded.');
+        }
 
         this.tabs = {
+            dashboard: Tabs.DashboardTab,
             overview: Tabs.OverviewTab,
             streams: Tabs.StreamsTab,
             sources: Tabs.SourcesTab,
             server: Tabs.ServerTab,
             path: Tabs.PathDefaultsTab,
-            users: Tabs.UsersTab
+            users: Tabs.UsersTab,
+            hardware: Tabs.HardwareTab,
+            caddy: Tabs.CaddyTab,
+            docker: Tabs.DockerTab,
+            camerawall: Tabs.CameraWallTab,
+            recordings: Tabs.RecordingsTab,
+            logs: Tabs.LogsTab,
+            mtxsources: Tabs.MediaMTXSourcesTab,
+            go2rtcsources: Tabs.Go2RTCSourcesTab,
+            streamviewer: Tabs.StreamViewerTab,
+            camerafocus: Tabs.CameraFocusTab,
+            apidocs: Tabs.ApiDocsTab,
+            snapshots: Tabs.SnapshotsTab,
+            hwaccel: Tabs.HwAccelTab,
+            scrypted: Tabs.ScryptedTab,
+            matterbridge: Tabs.MatterBridgeTab,
+            homeassistant: Tabs.HomeAssistantTab,
         };
 
         await this.render();
@@ -78,12 +100,18 @@ export default class Page {
     async showTab(tab) {
         this.destroyTab();
         const constructor = this.tabs[tab.slug];
+        if (!constructor) return;
+
         this.tab = new constructor(this);
 
         if (!this.tab)
             return;
 
         await this.tab.render();
+    }
+
+    get contentWrapper() {
+        return this.tabNavigation?.contentWrapper || this.element;
     }
 
     async eject() {

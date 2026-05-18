@@ -31,7 +31,10 @@ export default class MediamtxApiProxy extends MediamtxProxy {
 
             'GET /rtspsessions/list',
             'GET /rtspsessions/get/:id',
-            'POST /rtspsessions/kick/:id'
+            'POST /rtspsessions/kick/:id',
+
+            'GET /recordings/list',
+            'GET /recordings/get'
         ];
 
         this.router = this.express.Router();

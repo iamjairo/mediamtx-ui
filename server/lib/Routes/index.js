@@ -7,6 +7,8 @@ import SourcesRoutes from "./Sources.js";
 import PlaybackRoutes from "./Playback.js";
 import RecordingRoutes from "./Recording.js";
 import MonitoringRoutes from "./Monitoring.js";
+import CaddyRoutes from "./Caddy.js";
+import DockerRoutes from "./Docker.js";
 
 export default class Routes {
     constructor(server) {
@@ -54,6 +56,14 @@ export default class Routes {
         // monitoring
         this.monitoringRoutes = new MonitoringRoutes(this);
         this.router.use(this.monitoringRoutes.router);
+
+        // caddy admin API proxy
+        this.caddyRoutes = new CaddyRoutes(this);
+        this.router.use(this.caddyRoutes.router);
+
+        // docker engine API proxy
+        this.dockerRoutes = new DockerRoutes(this);
+        this.router.use(this.dockerRoutes.router);
     }
 
     getRouter() {

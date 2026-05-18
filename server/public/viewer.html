@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Camera Wall — MediaMTX</title>
+    <link rel="stylesheet" href="/css/page.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e17; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+        .viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 12px;
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            height: 36px;
+            flex-shrink: 0;
+        }
+        .viewer-title { font-size: 0.75rem; font-weight: 600; color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase; }
+        .viewer-controls { display: flex; gap: 4px; align-items: center; }
+        .viewer-layout-btn {
+            padding: 3px 10px;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            color: #64748b;
+            font-size: 0.65rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .viewer-layout-btn.active, .viewer-layout-btn:hover {
+            background: #06b6d4;
+            border-color: #06b6d4;
+            color: #fff;
+        }
+        .viewer-count { font-size: 0.65rem; color: #64748b; margin-right: 8px; }
+        .viewer-fullscreen-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            padding: 3px 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .viewer-fullscreen-btn:hover { background: rgba(6,182,212,0.2); }
+
+        .viewer-grid {
+            display: grid;
+            gap: 1px;
+            width: 100%;
+            height: calc(100% - 36px);
+            background: #0a0e17;
+        }
+        .viewer-grid[data-layout="1x1"] { grid-template-columns: 1fr; }
+        .viewer-grid[data-layout="2x1"] { grid-template-columns: repeat(2, 1fr); grid-template-rows: 1fr; }
+        .viewer-grid[data-layout="2x2"] { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); }
+        .viewer-grid[data-layout="3x2"] { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); }
+        .viewer-grid[data-layout="3x3"] { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
+        .viewer-grid[data-layout="4x2"] { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); }
+
+        .viewer-cell {
+            position: relative;
+            background: #0d1321;
+            overflow: hidden;
+        }
+        .viewer-cell video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #0a0e17;
+        }
+        .viewer-cell .cell-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 6px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .viewer-cell .cell-name {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.85);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .viewer-cell .cell-name::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 4px rgba(34,197,94,0.5);
+        }
+        .viewer-cell .cell-proto {
+            font-size: 0.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 1px 5px;
+            border-radius: 2px;
+            color: #fff;
+            background: rgba(6,182,212,0.7);
+        }
+        .viewer-cell .cell-proto.protocol-rtsp { background: rgba(6,182,212,0.7); }
+        .viewer-cell .cell-proto.protocol-hls { background: rgba(168,85,247,0.7); }
+        .viewer-cell .cell-proto.protocol-webrtc { background: rgba(34,197,94,0.7); }
+        .viewer-cell .cell-proto.protocol-rtmp { background: rgba(249,115,22,0.7); }
+
+        .viewer-cell-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #334155;
+            font-size: 0.7rem;
+        }
+        .viewer-cell-empty svg { width: 24px; height: 24px; opacity: 0.2; }
+
+        .viewer-status {
+            position: absolute;
+            bottom: 4px;
+            left: 8px;
+            display: flex;
+            gap: 8px;
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.5);
+            z-index: 2;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="viewer-header">
+        <span class="viewer-title">Camera Wall</span>
+        <div class="viewer-controls">
+            <span class="viewer-count" id="streamCount">0 streams</span>
+            <button class="viewer-layout-btn" data-layout="1x1">1×1</button>
+            <button class="viewer-layout-btn" data-layout="2x1">2×1</button>
+            <button class="viewer-layout-btn active" data-layout="2x2">2×2</button>
+            <button class="viewer-layout-btn" data-layout="3x2">3×2</button>
+            <button class="viewer-layout-btn" data-layout="3x3">3×3</button>
+            <button class="viewer-layout-btn" data-layout="4x2">4×2</button>
+            <button class="viewer-fullscreen-btn" id="fsBtn" title="Fullscreen">⛶</button>
+        </div>
+    </div>
+    <div class="viewer-grid" id="grid" data-layout="2x2"></div>
+
+    <script>
+        const grid = document.getElementById('grid');
+        const countEl = document.getElementById('streamCount');
+        let layout = '2x2';
+        let streams = [];
+        let hlsInstances = [];
+
+        // Layout buttons
+        document.querySelectorAll('.viewer-layout-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                layout = btn.dataset.layout;
+                document.querySelectorAll('.viewer-layout-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                grid.setAttribute('data-layout', layout);
+                populateGrid();
+            });
+        });
+
+        // Fullscreen
+        document.getElementById('fsBtn').addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+
+        function getProtocolClass(type) {
+            if (!type) return '';
+            const t = type.toLowerCase();
+            if (t.includes('rtsp')) return 'protocol-rtsp';
+            if (t.includes('hls')) return 'protocol-hls';
+            if (t.includes('webrtc')) return 'protocol-webrtc';
+            if (t.includes('rtmp')) return 'protocol-rtmp';
+            if (t.includes('srt')) return 'protocol-srt';
+            return '';
+        }
+
+        function splitCamelCase(s) {
+            return s.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
+        }
+
+        function getHlsUrl(name) {
+            const url = new URL(window.location.href);
+            const port = new URLSearchParams(url.search).get('hlsPort') || '8888';
+            return `${url.protocol}//${url.hostname}:${port}/${name}/index.m3u8`;
+        }
+
+        function destroyCells() {
+            hlsInstances.forEach(h => { if (h) h.destroy(); });
+            hlsInstances = [];
+        }
+
+        function initHls(videoEl, hlsUrl) {
+            if (typeof Hls === 'undefined' || !Hls.isSupported()) return null;
+            const hls = new Hls({ enableWorker: true, lowLatencyMode: true, maxBufferLength: 5, backBufferLength: 10 });
+            hls.attachMedia(videoEl);
+            hls.on(Hls.Events.MEDIA_ATTACHED, () => hls.loadSource(hlsUrl));
+            hls.on(Hls.Events.MANIFEST_PARSED, () => videoEl.play().catch(() => {}));
+            hls.on(Hls.Events.ERROR, (_, data) => {
+                if (data.fatal && data.type === Hls.ErrorTypes.NETWORK_ERROR)
+                    setTimeout(() => { hls.loadSource(hlsUrl); hls.startLoad(); }, 3000);
+                if (data.fatal && data.type === Hls.ErrorTypes.MEDIA_ERROR)
+                    hls.recoverMediaError();
+            });
+            return hls;
+        }
+
+        function populateGrid() {
+            destroyCells();
+            grid.innerHTML = '';
+            const parts = layout.split('x').map(Number);
+            const maxCells = parts[0] * parts[1];
+
+            for (let i = 0; i < maxCells; i++) {
+                const stream = streams[i];
+                if (stream) {
+                    const cell = document.createElement('div');
+                    cell.className = 'viewer-cell';
+
+                    const video = document.createElement('video');
+                    video.autoplay = true; video.muted = true; video.playsInline = true;
+                    cell.append(video);
+
+                    const overlay = document.createElement('div');
+                    overlay.className = 'cell-overlay';
+
+                    const nameEl = document.createElement('span');
+                    nameEl.className = 'cell-name';
+                    nameEl.textContent = stream.confName;
+                    overlay.append(nameEl);
+
+                    const sourceType = stream.source?.type || '';
+                    if (sourceType) {
+                        const proto = document.createElement('span');
+                        proto.className = `cell-proto ${getProtocolClass(sourceType)}`;
+                        proto.textContent = splitCamelCase(sourceType).toUpperCase();
+                        overlay.append(proto);
+                    }
+                    cell.append(overlay);
+
+                    const viewers = stream.readers?.length || 0;
+                    const rx = ((parseInt(stream.bytesReceived) || 0) / 1048576).toFixed(1);
+                    const status = document.createElement('div');
+                    status.className = 'viewer-status';
+                    status.innerHTML = `<span>👁 ${viewers}</span><span>↓${rx} MB</span>`;
+                    cell.append(status);
+
+                    const hls = initHls(video, getHlsUrl(stream.confName));
+                    hlsInstances.push(hls);
+                    grid.append(cell);
+                } else {
+                    const cell = document.createElement('div');
+                    cell.className = 'viewer-cell viewer-cell-empty';
+                    cell.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="15" height="12" rx="2"/><path d="M17 10l4-2.5v9L17 14"/></svg>`;
+                    grid.append(cell);
+                }
+            }
+        }
+
+        async function loadStreams() {
+            try {
+                const res = await fetch('/mediamtx/paths/list');
+                const data = await res.json();
+                if (data.items) {
+                    streams = data.items;
+                    countEl.textContent = `${streams.length} stream${streams.length !== 1 ? 's' : ''}`;
+                }
+            } catch (e) {}
+        }
+
+        async function init() {
+            await loadStreams();
+            populateGrid();
+            setInterval(async () => {
+                await loadStreams();
+            }, 5000);
+        }
+
+        init();
+    </script>
+</body>
+</html>

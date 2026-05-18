@@ -1,3 +1,5 @@
+import { getMockResponse, isMockFallbackEnabled } from './mock_data.js';
+
 export default class FetchManager {
     constructor({
                     idleTimeout = 10000,
@@ -32,7 +34,20 @@ export default class FetchManager {
             });
         } catch (err) {
             this.requests.delete(entry);
+            if (isMockFallbackEnabled() && !controller.signal.aborted) {
+                const mock = getMockResponse(url);
+                if (mock) return mock;
+            }
             throw err;
+        }
+
+        // Server reachable but endpoint failed (5xx) — try mock fallback too.
+        if (response.status >= 500 && isMockFallbackEnabled()) {
+            const mock = getMockResponse(url);
+            if (mock) {
+                this.requests.delete(entry);
+                return mock;
+            }
         }
 
         if (response.status === 401) {

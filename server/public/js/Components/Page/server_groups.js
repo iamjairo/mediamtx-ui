@@ -142,6 +142,25 @@ const ServerGroups = [
         ]
     },
     {
+        name: 'Playback',
+        storeKey: 'playback',
+        columns: [
+            {
+                name: 'Enabled',
+                props: ['playback', 'playbackAddress']
+            }, {
+                name: 'Security',
+                props: [
+                    'playbackEncryption',
+                    'playbackServerKey',
+                    'playbackServerCert',
+                    'playbackAllowOrigins',
+                    'playbackTrustedProxies'
+                ]
+            }
+        ]
+    },
+    {
         name: 'API',
         storeKey: 'api',
         columns: [

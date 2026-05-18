@@ -1,0 +1,72 @@
+networks:
+  camnet:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
+  recordings:
+
+services:
+
+  # FFmpeg + VAAPI + GStreamer transcoding toolkit
+  hwaccel:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.hwaccel
+    image: mediamtx-hwaccel:latest
+    entrypoint: ["sleep", "infinity"]
+    devices:
+      - '/dev/dri:/dev/dri'
+    group_add:
+      - video
+      - render
+    volumes:
+      - recordings:/recordings
+    networks:
+      - camnet
+
+  mediamtx:
+    extends:
+      file: docker-compose-mediamtx.yml
+      service: mediamtx
+    devices:
+      - '/dev/dri:/dev/dri'
+    group_add:
+      - video
+      - render
+    networks:
+      - camnet
+
+  mediamtxui:
+    extends:
+      file: docker-compose.yml
+      service: mediamtxui
+    environment:
+      - HW_ACCEL=${HW_ACCEL:-vaapi}
+      - LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME:-iHD}
+    devices:
+      - '/dev/dri:/dev/dri'
+    group_add:
+      - video
+      - render
+    volumes:
+      - recordings:/recordings:ro
+    networks:
+      - camnet
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2019:2019"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - mediamtxui
+      - mediamtx
+    networks:
+      - camnet

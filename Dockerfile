@@ -1,24 +1,23 @@
-FROM linuxserver/ffmpeg:latest
+FROM node:22-bookworm-slim AS base
 
-VOLUME ["/app/server/node_modules"]
-
-RUN apt-get update -y
-RUN apt-get install v4l-utils uvcdynctrl psmisc -y
-
-# Installing node.js via n
-
-RUN apt-get install git make curl -y
-RUN curl -L https://bit.ly/n-install | bash -s -- -y
-RUN ln -s "/root/n/bin/n" "/usr/bin/n"
-#RUN chown -R root:root "/root/.npm"
-#RUN chmod 777 -R "/root/.npm"
-RUN n 22
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    v4l-utils \
+    psmisc \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app/server
-COPY server/package*.json .
-RUN npm install
+COPY server/package*.json ./
+RUN npm ci --omit=dev
 
 WORKDIR /app
 COPY . .
 
-ENTRYPOINT [""]
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3000/ || exit 1
+
+CMD ["node", "server/index.js"]

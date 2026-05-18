@@ -1,0 +1,235 @@
+/* ── Logs Tab ───────────────────────────────────────────────────────────── */
+
+.tab.logs-tab {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header */
+.logs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-m) 0;
+}
+
+.logs-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+}
+
+.logs-title {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.logs-subtitle {
+    font-size: var(--fs-s);
+    color: var(--text-muted-color);
+    margin: 0;
+}
+
+.logs-header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+}
+
+/* Filter bar */
+.logs-filter-bar {
+    display: flex;
+    gap: var(--space-m);
+    align-items: center;
+    margin-bottom: var(--space-m);
+    flex-wrap: wrap;
+}
+
+.logs-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-s);
+    padding: 6px 12px;
+    flex: 1;
+    max-width: 320px;
+    color: var(--text-muted-color);
+}
+
+.logs-search {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    font-size: var(--fs-s);
+    width: 100%;
+    font-family: inherit;
+}
+
+.logs-search::placeholder {
+    color: var(--text-muted-color);
+}
+
+/* Level filter buttons */
+.logs-level-btns {
+    display: flex;
+    gap: 2px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-s);
+    padding: 2px;
+}
+
+.logs-level-btn {
+    padding: 4px 12px;
+    background: none;
+    border: none;
+    border-radius: var(--radius-s);
+    color: var(--text-muted-color);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.logs-level-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.logs-level-btn.active {
+    color: #fff;
+}
+
+.logs-level-btn.active.logs-level-all {
+    background: var(--color-primary);
+}
+
+.logs-level-btn.active.logs-level-info {
+    background: #3b82f6;
+}
+
+.logs-level-btn.active.logs-level-warn {
+    background: #f59e0b;
+}
+
+.logs-level-btn.active.logs-level-error {
+    background: #ef4444;
+}
+
+.logs-level-btn.active.logs-level-debug {
+    background: #a855f7;
+}
+
+/* Log panel */
+.logs-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-m);
+    max-height: 600px;
+    overflow-y: auto;
+    padding: var(--space-s);
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 0.72rem;
+    line-height: 1.6;
+}
+
+/* Log row */
+.logs-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 3px 6px;
+    border-radius: var(--radius-s);
+    transition: background 0.1s;
+}
+
+.logs-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.logs-time {
+    color: var(--text-muted-color);
+    opacity: 0.6;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    min-width: 60px;
+}
+
+.logs-badge {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    min-width: 42px;
+    text-align: center;
+}
+
+.logs-badge-info {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+.logs-badge-warn {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+.logs-badge-error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.logs-badge-debug {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+}
+
+.logs-source {
+    color: var(--text-muted-color);
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+.logs-message {
+    color: var(--text-color);
+    word-break: break-all;
+}
+
+/* Empty state */
+.logs-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-m);
+    padding: var(--space-xl);
+    color: var(--text-muted-color);
+    font-size: var(--fs-s);
+    font-family: inherit;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .logs-filter-bar {
+        flex-direction: column;
+    }
+    .logs-search-wrap {
+        max-width: none;
+    }
+    .logs-row {
+        flex-wrap: wrap;
+    }
+}
+
+/* ── Camera Wall protocol toggle ────────────────────────────────────────── */
+.camera-proto-group {
+    margin-left: var(--space-m);
+}

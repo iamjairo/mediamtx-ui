@@ -1,6 +1,8 @@
 import express from "express";
 import session from "express-session";
 import csrf from "csurf";
+import fs from "fs";
+import path from "path";
 
 import Events from './EventEmitter.js';
 import Routes from "./Routes/index.js";
@@ -12,16 +14,40 @@ export default class Server extends Events {
 
         this.app = app;
         this.mediamtx = this.app.mediamtx;
+        this.go2rtc = this.app.go2rtc;
         this.publicDir = this.app.publicDir;
         this.dataDir = this.app.dataDir;
+
+        // Prefer the built React client (client/dist) when it exists; fall back
+        // to the legacy vanilla server/public/ tree. CLIENT_DIST overrides.
+        const clientDist = process.env.CLIENT_DIST
+            || path.join(process.cwd(), '..', 'client', 'dist');
+        this.clientDist = fs.existsSync(path.join(clientDist, 'index.html')) ? clientDist : null;
+        this.staticDir = this.clientDist || this.publicDir;
+        console.log(`SERVING STATIC FROM `.padEnd(30, '.'), this.staticDir);
 
         this.port = process.env.SERVER_PORT || 3000;
 
         this.engine = express();
         this.engine.use(express.json());
 
-        this.engine.use(express.static(this.publicDir));
+        this.engine.use(express.static(this.staticDir));
 
+        // SPA fallback for the React client — runs BEFORE auth so the shell
+        // (incl. login screen) loads when unauthenticated. Deep links like
+        // /dashboard, /streamviewer that don't match a static file get
+        // index.html so BrowserRouter can take over.
+        if (this.clientDist) {
+            const indexHtml = fs.readFileSync(path.join(this.clientDist, 'index.html'));
+            const apiPrefixes = ['/mediamtx', '/go2rtc', '/api', '/auth',
+                '/login', '/logout', '/csrf-token', '/settings', '/images', '/help'];
+            this.engine.use((req, res, next) => {
+                if (req.method !== 'GET') return next();
+                if (apiPrefixes.some((p) => req.path === p || req.path.startsWith(p + '/'))) return next();
+                if (path.extname(req.path)) return next();
+                res.type('html').send(indexHtml);
+            });
+        }
 
         this.csrfProtection = csrf();
 
@@ -56,6 +82,9 @@ export default class Server extends Events {
         // Mediamtx API Proxy
         this.engine.use('/mediamtx', this.mediamtx.proxy.router);
         this.engine.use('/mediamtx/metrics', this.mediamtx.metrics.router);
+
+        // Go2RTC API Proxy
+        this.engine.use('/go2rtc', this.go2rtc.proxy.router);
 
         // API routes
         this.routes = new Routes(this);

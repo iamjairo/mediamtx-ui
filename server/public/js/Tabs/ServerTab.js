@@ -19,7 +19,7 @@ export default class ServerTab extends Tab {
         // the box
         this.element = document.createElement("div");
         this.element.className = "tab server";
-        this.page.element.append(this.element);
+        this.page.contentWrapper.append(this.element);
 
         this.navigation = new GroupNavigation(this, () => this.renderGroup());
         this.navigation.render();
@@ -53,7 +53,7 @@ export default class ServerTab extends Tab {
                 if (col.props) {
                     const options = this.settings.tree[storeKey].options || {};
                     const inputTypes = this.settings.tree[storeKey].inputType || {};
-                    const locks = this.settings[storeKey].locked || [];
+                    const locks = this.settings.tree[storeKey]?.locked || [];
 
                     col.props.forEach(prop => {
                         //const item = new FormItem(this, storeKey, store, prop, inputType, values, locked, {});
@@ -68,8 +68,10 @@ export default class ServerTab extends Tab {
                             elementOptions : {}
                         });
 
-                        groupElement.append(item.element);
-                        this.items[prop] = item;
+                        if (item.element) {
+                            groupElement.append(item.element);
+                            this.items[prop] = item;
+                        }
                     });
                 }
                 this.groupsElement.append(groupElement);
