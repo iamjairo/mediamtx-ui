@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+const DEFAULT_URL = 'https://scrypted.selfhosting.iamjairo.com';
+
 const STATUS_LABELS = {
   connected: '● Reachable',
   error: '● Unreachable',
@@ -22,8 +24,8 @@ function safeIframeUrl(value) {
 }
 
 export default function ScryptedTab() {
-  const [url, setUrl] = useState(() => localStorage.getItem('scrypted:url') || '');
-  const [inputValue, setInputValue] = useState(() => localStorage.getItem('scrypted:url') || '');
+  const [url, setUrl] = useState(() => localStorage.getItem('scrypted:url') || DEFAULT_URL);
+  const [inputValue, setInputValue] = useState(() => localStorage.getItem('scrypted:url') || DEFAULT_URL);
   const [status, setStatus] = useState('unknown');
   const iframeRef = useRef(null);
 
@@ -92,7 +94,7 @@ export default function ScryptedTab() {
         <input
           type="text"
           className="scrypted-url-input"
-          placeholder="https://192.168.1.50:10443"
+          placeholder={DEFAULT_URL}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
