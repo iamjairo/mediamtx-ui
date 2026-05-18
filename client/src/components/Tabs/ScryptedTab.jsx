@@ -11,6 +11,16 @@ function normalizeUrl(value, defaultScheme = 'https') {
   return /^https?:\/\//i.test(value) ? value : `${defaultScheme}://${value}`;
 }
 
+function safeIframeUrl(value) {
+  if (!value) return '';
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '';
+  } catch {
+    return '';
+  }
+}
+
 export default function ScryptedTab() {
   const [url, setUrl] = useState(() => localStorage.getItem('scrypted:url') || '');
   const [inputValue, setInputValue] = useState(() => localStorage.getItem('scrypted:url') || '');
@@ -99,7 +109,7 @@ export default function ScryptedTab() {
               <iframe
                 ref={iframeRef}
                 className="scrypted-iframe"
-                src={url}
+                src={safeIframeUrl(url)}
                 allow="camera; microphone; fullscreen; autoplay"
                 onLoad={() => setStatus('connected')}
                 onError={() => setStatus('error')}

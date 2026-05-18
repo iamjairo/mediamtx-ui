@@ -9,6 +9,16 @@ const STATUS_LABELS = {
   unknown: '● Unknown',
 };
 
+function safeIframeUrl(value) {
+  if (!value) return '';
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '';
+  } catch {
+    return '';
+  }
+}
+
 function normalizeUrl(value, defaultScheme = 'http') {
   if (!value) return '';
   return /^https?:\/\//i.test(value) ? value : `${defaultScheme}://${value}`;
@@ -115,7 +125,7 @@ export default function HomeAssistantTab() {
               <iframe
                 key={embedKey}
                 className="ha-iframe"
-                src={url}
+                src={safeIframeUrl(url)}
                 allow="autoplay; fullscreen; camera; microphone"
                 onLoad={() => setStatus('connected')}
                 onError={() => setStatus('error')}
