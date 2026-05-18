@@ -9,11 +9,18 @@ const STATUS_LABELS = {
   unknown: '● Unknown',
 };
 
+// Tunet supports `?theme=<name>` on initial mount (see Tunet ConfigContext).
+// Pinning mediamtxNeon gives the embedded HA Dashboard visual continuity with
+// the rest of this app without touching the user's saved Tunet preference.
+const EMBED_THEME = 'mediamtxNeon';
+
 function safeIframeUrl(value) {
   if (!value) return '';
   try {
     const parsed = new URL(value);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '';
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    parsed.searchParams.set('theme', EMBED_THEME);
+    return parsed.href;
   } catch {
     return '';
   }
