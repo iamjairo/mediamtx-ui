@@ -10,7 +10,12 @@ function safeIframeUrl(value) {
   if (!value) return '';
   try {
     const parsed = new URL(value);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '';
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    // Tell the restyled Scrypted UI to drop its own AppBar + Drawer; the
+    // dashboard already provides the outer shell. Fork honors ?embed=1
+    // (see manage-scrypted-app src/composables/useEmbedMode.ts).
+    parsed.searchParams.set('embed', '1');
+    return parsed.href;
   } catch {
     return '';
   }
