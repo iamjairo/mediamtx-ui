@@ -26,6 +26,13 @@ const FIELDS = [
     ],
   },
   {
+    section: 'Caddy Manager',
+    description: 'caddyserver-manager — full reverse-proxy / TLS / WAF console, embedded in the Caddy tab.',
+    items: [
+      { key: 'caddy:url', label: 'Caddy Manager URL', placeholder: 'https://caddy.selfhosting.iamjairo.com', type: 'url' },
+    ],
+  },
+  {
     section: 'Matter Bridge',
     description: 'matter-onvif-bridge — bridges ONVIF cameras to Apple Home / Google Home.',
     items: [
@@ -94,7 +101,7 @@ export default function SettingsTab() {
   }
 
   function reset() {
-    if (!confirm('Reset all integration settings? This clears localStorage entries for HA, Scrypted, Matter Bridge, Docker, and the custom domain.')) return;
+    if (!confirm('Reset all integration settings? This clears localStorage entries for HA, Scrypted, Caddy, Matter Bridge, Docker, and the custom domain.')) return;
     for (const group of FIELDS) for (const item of group.items) localStorage.removeItem(item.key);
     setValues(readAll());
     setSavedAt(null);
