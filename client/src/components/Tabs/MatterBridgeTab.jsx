@@ -109,52 +109,64 @@ export default function MatterBridgeTab() {
         </div>
       </div>
 
-      {/* Runtime Status Card */}
+      {/* Capabilities — honest read of what's actually in the repo, not faked
+          live status. The previous "Unknown / Multicast / Off" placeholder
+          panel was removed because there's no bridge HTTP API to query yet;
+          see the Roadmap card at the bottom for the planned control surface. */}
       <section className="mbridge-card">
-        <h3>Runtime Status</h3>
+        <h3>Capabilities</h3>
+        <p className="mbridge-card-desc">
+          What the bridge ships today, pulled from <code>ROADMAP.md</code> + the matter-camera crate.
+          Matter 1.5 clusters · media-server choice · OccupancySensing for motion.
+        </p>
         <div className="mbridge-status-grid">
           <div className="mbridge-stat">
-            <span className="mbridge-stat-label">Bridge Process</span>
-            <span className="mbridge-stat-value" data-key="process">
-              <span className="mbridge-dot off" />
-              {' '}Not connected to dashboard
-            </span>
-          </div>
-          <div className="mbridge-stat">
-            <span className="mbridge-stat-label">Matter Port (5540/UDP)</span>
-            <span className="mbridge-stat-value" data-key="matter-port">
-              <span className="mbridge-dot unknown" />
-              {' '}Unknown — checked from bridge host
-            </span>
-          </div>
-          <div className="mbridge-stat">
-            <span className="mbridge-stat-label">ONVIF Discovery (3702/UDP)</span>
-            <span className="mbridge-stat-value" data-key="onvif-port">
-              <span className="mbridge-dot unknown" />
-              {' '}Multicast — runs on bridge host
-            </span>
-          </div>
-          <div className="mbridge-stat">
-            <span className="mbridge-stat-label">Media Server</span>
-            <span className="mbridge-stat-value" data-key="media">
+            <span className="mbridge-stat-label">Matter 1.5 clusters</span>
+            <span className="mbridge-stat-value">
               <span className="mbridge-dot on" />
-              {' '}MediaMTX (this dashboard)
+              {' '}10 implemented (6 functional, 2 stub, 2 inherited)
+            </span>
+          </div>
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">Media-server support</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot on" />
+              {' '}go2rtc 1.9.7 · MediaMTX 1.12.2 (both pinned)
+            </span>
+          </div>
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">Max endpoints</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot on" />
+              {' '}8 cameras (7 + motion, 1 video-only)
+            </span>
+          </div>
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">Test coverage</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot on" />
+              {' '}47 passing · clippy clean · fmt clean
             </span>
           </div>
         </div>
-        <p className="mbridge-note">
-          The bridge runs as a separate Rust binary on a host with IPv6 + LAN multicast (typically not Docker on macOS).
-          Live status would require the bridge to expose an HTTP API — see the{' '}
-          <a href={`${REPO_URL}#roadmap`} target="_blank" rel="noopener noreferrer">roadmap</a> for tracking.
-        </p>
+        <div className="mbridge-cluster-list">
+          <span className="mbridge-card-label">Implemented Matter 1.5 clusters</span>
+          <div className="mbridge-stat-line"><span>CameraAvStreamManagement</span><code>0x0551 · functional</code></div>
+          <div className="mbridge-stat-line"><span>WebRTCTransportProvider</span><code>0x0553 · functional</code></div>
+          <div className="mbridge-stat-line"><span>WebRTCTransportRequestor</span><code>0x0554 · functional</code></div>
+          <div className="mbridge-stat-line"><span>ZoneManagement</span><code>0x0550 · in-memory CRUD</code></div>
+          <div className="mbridge-stat-line"><span>OccupancySensing</span><code>0x0406 · motion via ONVIF MotionAlarm</code></div>
+          <div className="mbridge-stat-line"><span>PushAvStreamTransport</span><code>0x0555 · stub</code></div>
+          <div className="mbridge-stat-line"><span>Chime</span><code>0x0556 · stub</code></div>
+        </div>
       </section>
 
-      {/* Configuration Card */}
-      <section className="mbridge-card">
-        <h3>Configuration</h3>
+      {/* Numbered setup wizard — Step 1 / Configure */}
+      <section className="mbridge-card mbridge-step">
+        <h3><span className="mbridge-step-num">1</span> Configure</h3>
         <p className="mbridge-card-desc">
           These values are saved locally and used to generate a working <code>.env</code> file.
-          They are not sent to the bridge automatically.
+          They are not sent to the bridge automatically — the bridge reads its own <code>.env</code> at startup.
         </p>
         <div className="mbridge-form">
           <TextField label="ONVIF Username" fieldKey="onvifUser" placeholder="admin" value={config.onvifUser || 'admin'} onChange={updateField} />
@@ -179,12 +191,45 @@ export default function MatterBridgeTab() {
         )}
       </section>
 
-      {/* Commissioning Card */}
-      <section className="mbridge-card">
-        <h3>Commissioning</h3>
+      {/* Step 2 — Deploy snippets. Pulled from README quickstart so this stays
+          in sync with the canonical install paths. */}
+      <section className="mbridge-card mbridge-step">
+        <h3><span className="mbridge-step-num">2</span> Deploy</h3>
+        <p className="mbridge-card-desc">
+          Three supported paths. macOS must run native (Docker can't forward UDP multicast for ONVIF discovery / Matter mDNS).
+        </p>
+        <div className="mbridge-quickstart-grid">
+          <div>
+            <span className="mbridge-card-label">Native (macOS / Linux)</span>
+            <pre className="mbridge-pre">{`git clone ${REPO_URL}
+cd matter-onvif-bridge
+cp .env.example .env
+# edit .env with your ONVIF credentials, then:
+cargo run --release -p matter-onvif-bridge`}</pre>
+          </div>
+          <div>
+            <span className="mbridge-card-label">Docker Compose (Linux only)</span>
+            <pre className="mbridge-pre">{`docker compose up -d
+# requires host networking for mDNS + ONVIF multicast`}</pre>
+          </div>
+          <div>
+            <span className="mbridge-card-label">systemd (Raspberry Pi / Linux server)</span>
+            <pre className="mbridge-pre">{`./scripts/install-service.sh
+# installs binary + .env to /opt and enables matter-onvif-bridge.service`}</pre>
+          </div>
+        </div>
+        <p className="mbridge-note">
+          External drives don't support incremental compilation locks — set <code>CARGO_INCREMENTAL=0</code> when building from one.
+        </p>
+      </section>
+
+      {/* Step 3 — Commissioning */}
+      <section className="mbridge-card mbridge-step">
+        <h3><span className="mbridge-step-num">3</span> Commission</h3>
         <p className="mbridge-card-desc">
           On first run the bridge prints a Matter pairing QR code to its console.
           Scan it with Google Home or Apple Home to add cameras as native Matter devices.
+          Once paired, the bridge persists endpoint slots so room assignments survive restarts.
         </p>
         <div className="mbridge-commission">
           <div className="mbridge-qr-placeholder">
@@ -221,27 +266,84 @@ export default function MatterBridgeTab() {
         </div>
       </section>
 
-      {/* Quick Start Card */}
-      <section className="mbridge-card">
-        <h3>Quick Start</h3>
-        <div className="mbridge-quickstart-grid">
-          <div>
-            <span className="mbridge-card-label">1. Clone &amp; build</span>
-            <pre className="mbridge-pre">{`git clone ${REPO_URL}
-cd matter-onvif-bridge
-cp .env.example .env
-# edit .env with your ONVIF credentials
-cargo run --release -p matter-onvif-bridge`}</pre>
+      {/* Step 4 — Verify in a real Matter controller. Replaces the "Quick Start"
+          card; controller validation is the immediate roadmap priority and
+          tracking it in-tab gives the user a place to record results. */}
+      <section className="mbridge-card mbridge-step">
+        <h3><span className="mbridge-step-num">4</span> Verify in a Matter controller</h3>
+        <p className="mbridge-card-desc">
+          After commissioning, walk the camera through the basics in each ecosystem you use.
+          The README's tested-controller matrix will be updated as results come in.
+        </p>
+        <div className="mbridge-status-grid">
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">Google Home</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot unknown" />
+              {' '}Not yet validated · live view + motion target
+            </span>
           </div>
-          <div>
-            <span className="mbridge-card-label">2. Or use Docker (Linux)</span>
-            <pre className="mbridge-pre">{`docker compose up -d
-# host networking required for mDNS + ONVIF multicast`}</pre>
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">Apple Home</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot unknown" />
+              {' '}Not yet validated · live view target
+            </span>
+          </div>
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">Amazon Alexa</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot unknown" />
+              {' '}Not yet validated · stretch target
+            </span>
           </div>
         </div>
         <p className="mbridge-note">
-          On macOS the bridge must run natively (Docker can't forward UDP multicast).
-          Only the media server runs in Docker on macOS.
+          Verification checklist per controller: <strong>commissioning succeeds</strong> · <strong>live view streams</strong> · <strong>motion event fires</strong> · <strong>device survives restart</strong>.
+        </p>
+      </section>
+
+      {/* Roadmap callout — live status / control surface is the next major
+          bridge feature. This card replaces the dishonest status panel that
+          previously claimed to show port states it couldn't actually read. */}
+      <section className="mbridge-card mbridge-roadmap">
+        <h3>Live status — coming soon</h3>
+        <p className="mbridge-card-desc">
+          The bridge currently has no HTTP API, so this tab can't show real-time process /
+          camera / motion state. An Axum control surface is being designed:
+        </p>
+        <div className="mbridge-status-grid">
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">GET /api/status</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot unknown" />
+              {' '}bridge health, discovery mode, last scan
+            </span>
+          </div>
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">GET /api/cameras</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot unknown" />
+              {' '}discovered + commissioned, endpoint IDs, motion state
+            </span>
+          </div>
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">GET /api/pairing/qr</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot unknown" />
+              {' '}commissioning QR PNG (when in commissioning window)
+            </span>
+          </div>
+          <div className="mbridge-stat">
+            <span className="mbridge-stat-label">GET /api/events (SSE)</span>
+            <span className="mbridge-stat-value">
+              <span className="mbridge-dot unknown" />
+              {' '}live motion / discovery / commissioning event stream
+            </span>
+          </div>
+        </div>
+        <p className="mbridge-note">
+          See <a href={`${REPO_URL}/blob/main/ROADMAP.md`} target="_blank" rel="noopener noreferrer">ROADMAP.md</a> for sequencing — controller validation lands first, then the control surface.
         </p>
       </section>
     </div>
