@@ -8,7 +8,6 @@ import MatterBridgeTab from './components/Tabs/MatterBridgeTab.jsx';
 import HomeAssistantTab from './components/Tabs/HomeAssistantTab.jsx';
 import HardwareTab from './components/Tabs/HardwareTab.jsx';
 import CaddyTab from './components/Tabs/CaddyTab.jsx';
-import DockerTab from './components/Tabs/DockerTab.jsx';
 import DashboardTab from './components/Tabs/DashboardTab.jsx';
 import MediaMTXSourcesTab from './components/Tabs/MediaMTXSourcesTab.jsx';
 import Go2RTCSourcesTab from './components/Tabs/Go2RTCSourcesTab.jsx';
@@ -37,7 +36,6 @@ const PORTED = {
   homeassistant: HomeAssistantTab,
   hardware: HardwareTab,
   caddy: CaddyTab,
-  docker: DockerTab,
   dashboard: DashboardTab,
   mtxsources: MediaMTXSourcesTab,
   go2rtcsources: Go2RTCSourcesTab,

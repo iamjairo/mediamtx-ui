@@ -27,7 +27,6 @@ export const TABS = [
   { name: 'Logs', slug: 'logs', icon: 'scroll-text', section: 'infra' },
   { name: 'API Docs', slug: 'apidocs', icon: 'message-circle-question-mark', section: 'infra' },
   { name: 'Caddy', slug: 'caddy', icon: 'shield', section: 'infra' },
-  { name: 'Docker', slug: 'docker', icon: 'container', section: 'infra' },
   { name: 'Scrypted', slug: 'scrypted', icon: 'layout-dashboard', section: 'infra' },
   { name: 'Matter Bridge', slug: 'matterbridge', icon: 'shield', section: 'infra' },
   { name: 'Home Assistant', slug: 'homeassistant', icon: 'home', section: 'infra' },
